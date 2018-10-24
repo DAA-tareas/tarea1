@@ -3,7 +3,7 @@
  */
 public class Database {
     //estructura subyacente: archivo.txt
-    String file;
+    private String file;
 
     /**
      * @param file: Nombre del archivo (extension txt) donde estan almacenados los nodos

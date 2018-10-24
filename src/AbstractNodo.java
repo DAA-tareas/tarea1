@@ -9,4 +9,6 @@ public abstract class AbstractNodo {
         return id;
     }
 
+    public abstract String makeSerial();
+
 }

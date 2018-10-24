@@ -4,7 +4,7 @@ import java.util.List;
 public class stringQuickSort {
 
 
-    List<AbstractNodo> nodos;
+    List<Nodo> nodos;
     int length;
     Field field;
 
@@ -12,7 +12,7 @@ public class stringQuickSort {
 
     }
 
-    List<AbstractNodo> sort(List<AbstractNodo> listaNodos, Field field) {
+    List<Nodo> sort(List<Nodo> listaNodos, Field field) {
         if (listaNodos == null || listaNodos.size() == 0) {
             return listaNodos;
         }
@@ -58,7 +58,7 @@ public class stringQuickSort {
     }
 
     void exchangeNames(int i, int j) {
-        AbstractNodo temp = this.nodos.get(i);
+        Nodo temp = this.nodos.get(i);
         this.nodos.set(i, this.nodos.get(j));
         this.nodos.set(j,temp);
     }

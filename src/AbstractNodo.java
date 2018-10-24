@@ -1,11 +1,11 @@
-public abstract class AbstractNodo {
+public abstract class AbstractNodo implements Nodo{
     private int id;
 
     public AbstractNodo(int i){
         this.id = i;
     }
 
-    int getId(){
+    public int getId(){
         return id;
     }
 

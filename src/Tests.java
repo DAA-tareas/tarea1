@@ -1,5 +1,5 @@
-import java.io.IOException;
 import java.lang.StringBuffer;
+import java.io.IOException;
 
 public class Tests {
 
@@ -16,9 +16,9 @@ public class Tests {
         Database db = new Database("testP1Inserciones.txt");
         long[] times = new long[N.length];
         StringBuffer buf = new StringBuffer();
-        int diskAccess = 0;
+        int[] diskAccess = new int[7];
 
-        for(int i=5; i<6; i++){
+        for(int i=0; i<N.length; i++){
             long iniTime = System.currentTimeMillis();
             for(int n=0; n<this.N[i]; n++){
                 buf.append("id" + n + " rut" + n + " ptosRec" + n + "\r\n");
@@ -26,19 +26,23 @@ public class Tests {
                 if (n%Math.pow(10,5) == 0) {
                     db.add(buf.toString());
                     buf = new StringBuffer();
-                    diskAccess++;
+                    diskAccess[i]++;
                 }
             }
             if (buf.length() > 0) {
                 db.add(buf.toString());
-                diskAccess++;
+                diskAccess[i]++;
             }
 
             long finTime = System.currentTimeMillis();
 
             times[i] = finTime - iniTime;
         }
-        System.out.println(diskAccess);
+        System.out.println("Accesos totales a discos");
+        for (int i = 0; i<diskAccess.length; i++){
+            int j = i + 1;
+            System.out.print(diskAccess[i]);
+        }
         return times;
     }
 
@@ -49,8 +53,10 @@ public class Tests {
     public static void main(String[] args) throws IOException{
         Tests t = new Tests();
         long[] p1 = t.P1Inserciones();
+        System.out.println();
+        System.out.println("Timepos en milisegundos");
         for(long l : p1){
-            System.out.println(l);
+            System.out.print(l + " ");
         }
         /*
         for(int i : t.getN()){

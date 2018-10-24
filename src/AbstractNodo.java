@@ -8,4 +8,5 @@ public abstract class AbstractNodo {
     int getId(){
         return id;
     }
+
 }

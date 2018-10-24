@@ -34,4 +34,12 @@ public class NodoProd extends AbstractNodo {
     public void setPtosRec(int ptosRec){
         this.ptosRec = ptosRec;
     }
+
+    public String makeSerial() {
+        String id = Integer.toString(this.getId());
+        String pre = Integer.toString(precio);
+        String ptsN = Integer.toString(ptosNec);
+        String ptsR = Integer.toString(ptosRec);
+        return id + " " + pre + " " + ptsN + " " + ptsR;
+    }
 }

@@ -20,4 +20,10 @@ public class NodoCons extends AbstractNodo {
     public void setPtosAc(int ptosAc){
         this.ptosAc = ptosAc;
     }
+
+    public String makeSerial() {
+        String id = Integer.toString(this.getId());
+        String p = Integer.toString(ptosAc);
+        return id + " " + rut + " " + p;
+    }
 }

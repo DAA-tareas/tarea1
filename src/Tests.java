@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.lang.StringBuffer;
 
 public class Tests {
 
@@ -14,19 +15,30 @@ public class Tests {
     public long[] P1Inserciones() throws IOException{
         Database db = new Database("testP1Inserciones.txt");
         long[] times = new long[N.length];
+        StringBuffer buf = new StringBuffer();
+        int diskAccess = 0;
 
-        for(int i=0; i<this.N.length; i++){
+        for(int i=5; i<6; i++){
             long iniTime = System.currentTimeMillis();
             for(int n=0; n<this.N[i]; n++){
+                buf.append("id" + n + " rut" + n + " ptosRec" + n + "\r\n");
                 //Realizar inserciones
-                db.add("id" + n + " rut" + n + "ptosRec" + n);
+                if (n%Math.pow(10,5) == 0) {
+                    db.add(buf.toString());
+                    buf = new StringBuffer();
+                    diskAccess++;
+                }
+            }
+            if (buf.length() > 0) {
+                db.add(buf.toString());
+                diskAccess++;
             }
 
             long finTime = System.currentTimeMillis();
 
             times[i] = finTime - iniTime;
         }
-
+        System.out.println(diskAccess);
         return times;
     }
 

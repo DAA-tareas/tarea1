@@ -40,7 +40,6 @@ public class Tests {
         }
         System.out.println("Accesos totales a discos");
         for (int i = 0; i<diskAccess.length; i++){
-            int j = i + 1;
             System.out.print(diskAccess[i]);
         }
         return times;

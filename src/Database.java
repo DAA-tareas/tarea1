@@ -1,6 +1,7 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Database {
     //estructura subyacente: archivo.txt
@@ -33,12 +34,29 @@ public class Database {
         }
     }
 
+
+    public String serialize(ArrayList<Nodo> nList){
+        StringBuffer sb = new StringBuffer();
+        for(Nodo n : nList){
+            sb.append(n.makeSerial() + "\r\n");
+        }
+        return sb.toString();
+    }
+
     /**
      * Metodo que ordena segun un atributo
      * Utiliza MergeSort
      * @param attribute atributo por el que ordena
      */
     void ordenar(String attribute){
+        // Del archivo enorme (llamese A)
+        // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno
+        // Ordenar cada uno de los k bloques particularmente
+        // Recursivamente || Caso base: k = 1
+        // Agrupar de a 2 bloques, leer 10^5/2 nodos de cada bloque
+        // Crear un archivo ordenado, agregando 10^5 nodos hasta acabar elementos de ambos archivos
+
+
         return;
     }
 

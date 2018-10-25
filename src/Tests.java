@@ -24,9 +24,11 @@ public class Tests {
                 buf.append("id" + n + " rut" + n + " ptosRec" + n + "\r\n");
                 //Realizar inserciones
                 if (n%Math.pow(10,5) == 0) {
-                    db.add(buf.toString());
-                    buf = new StringBuffer();
-                    diskAccess[i]++;
+                    if(n > 0) {
+                        db.add(buf.toString());
+                        buf = new StringBuffer();
+                        diskAccess[i]++;
+                    }
                 }
             }
             if (buf.length() > 0) {
@@ -40,8 +42,7 @@ public class Tests {
         }
         System.out.println("Accesos totales a discos");
         for (int i = 0; i<diskAccess.length; i++){
-            System.out.print(diskAccess[i]);
-        }
+            System.out.print(diskAccess[i] + " ");
         return times;
     }
 

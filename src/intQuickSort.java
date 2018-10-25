@@ -3,11 +3,11 @@ import java.util.List;
 
 public class intQuickSort {
 
-    private List<AbstractNodo> array;
+    private List<Nodo> array;
     private int length;
     private Field field;
 
-    public List<AbstractNodo> sort(List<AbstractNodo> inputArr, Field field) {
+    public List<Nodo> sort(List<Nodo> inputArr, Field field) {
 
         if (inputArr == null || inputArr.size() == 0) {
             return null;
@@ -60,7 +60,7 @@ public class intQuickSort {
     }
 
     private void exchangeNumbers(int i, int j) {
-        AbstractNodo temp = array.get(i);
+        Nodo temp = array.get(i);
         array.set(i,array.get(j));
         array.set(j, temp);
     }

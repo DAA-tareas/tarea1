@@ -40,7 +40,7 @@ public class Database {
         for(Nodo n : nList){
             sb.append(n.makeSerial() + "\r\n");
         }
-        
+
         return sb.toString();
     }
 
@@ -60,6 +60,8 @@ public class Database {
 
         return;
     }
+
+
 
     public static void main(String[] args) throws  IOException{
         Database db = new Database("test.txt");

@@ -13,6 +13,7 @@ public class Tests {
         }
     }
 
+    
     public long[] P1Inserciones() throws IOException{
         Database db = new Database("testP1Inserciones.txt");
         long[] times = new long[N.length];

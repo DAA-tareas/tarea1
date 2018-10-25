@@ -23,7 +23,7 @@ public class Database {
         add(a);
     }
 
-    void add(ArrayList<Nodo> nodoList) throws IOException{
+    void add(List<Nodo> nodoList) throws IOException{
         BufferedWriter out = null;
         try {
             String toAdd = serialize(nodoList);
@@ -63,6 +63,9 @@ public class Database {
                     break;
                 }
                 String[] aNodo = linea.split(" ");
+                System.out.println(aNodo[0]);
+                System.out.println(aNodo[1]);
+                System.out.println(aNodo[2]);
 
                 if (aNodo.length==4){
                     nodo = new NodoProd(Integer.valueOf(aNodo[0]), Integer.valueOf(aNodo[1]), Integer.valueOf(aNodo[2]), Integer.valueOf(aNodo[3]));
@@ -74,13 +77,10 @@ public class Database {
             }
 
             Ordenador ord = new Ordenador();
-            lista =  ord.ordenarSec(lista, field);
-            String aArchivo = serialize(lista);
+            List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
 
-
-            File fileAux = new File(Integer.toString(nFile) + ".txt");
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileAux));
-            bw.write(aArchivo);
+            Database db = new Database(nFile + ".txt");
+            db.add(listaOrdenada);
 
             secondaryPaths.add(nFile + ".txt");
             nFile++;

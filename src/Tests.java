@@ -13,7 +13,7 @@ public class Tests {
         }
     }
 
-    
+
     public long[] P1Inserciones() throws IOException{
         Database db = new Database("testP1Inserciones.txt");
         long[] times = new long[N.length];
@@ -55,17 +55,17 @@ public class Tests {
     }
 
     public static void main(String[] args) throws IOException{
-        Tests t = new Tests();
+        /*Tests t = new Tests();
         long[] p1 = t.P1Inserciones();
         System.out.println();
         System.out.println("Timepos en milisegundos");
         for(long l : p1){
             System.out.print(l + " ");
-        }
+        }*/
 
-        /*Database db = new Database("testP1Inserciones.txt");
-        db.segmentar(1000, "id");
-        */
+        Database db = new Database("testP1Inserciones.txt");
+        db.segmentar(1837, "id");
+
         /*
         for(int i : t.getN()){
             System.out.println(i);

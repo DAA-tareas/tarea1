@@ -1,13 +1,11 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
-    private String[] secondaryPaths;
+    private List <String> secondaryPaths = new ArrayList<>();
 
     /**
      *
@@ -40,15 +38,55 @@ public class Database {
     /**metodo que escribe la info del archivo en archivos de tamaño B
      * @param B el tamaño de los segmentos
      */
-    void segmentar(int B){
+    void segmentar(int B, String field) throws IOException{
         File file = new File(path);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        int nFile = 1;
+        File fileAux;
+        boolean EOF = false;
+        while(!EOF){
+
+            List<Nodo> lista = new ArrayList<>();
+            String linea;
+
+            for (int i = 0; i < B; i++){
+                Nodo nodo;
+
+                if((linea = br.readLine())==null) {
+                    EOF = true;
+                    break;
+                }
+                String[] aNodo = linea.split(" ");
+
+                if (aNodo.length==4){
+                    nodo = new NodoProd(Integer.parseInt(aNodo[0]), Integer.parseInt(aNodo[1]), Integer.parseInt(aNodo[2]), Integer.parseInt(aNodo[3]));
+                }
+                else{
+                    nodo = new NodoCons(Integer.parseInt(aNodo[0]), aNodo[1], Integer.parseInt(aNodo[2]));
+                }
+                lista.add(nodo);
+            }
+
+            Ordenador ord = new Ordenador();
+            lista =  ord.ordenarSec(lista, field);
+            String aArchivo = serialize(lista);
+
+            fileAux = new File(Integer.toString(nFile) + ".txt");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileAux));
+            bw.write(aArchivo);
+
+            secondaryPaths.add(nFile + ".txt");
+            nFile++;
+
+        }
+
 
     }
 
-    public String serialize(ArrayList<Nodo> nList){
+    public String serialize(List<Nodo> nList){
         StringBuffer sb = new StringBuffer();
         for(Nodo n : nList){
-            sb.append(n.makeSerial() + "\r\n");
+            sb.append(n.makeSerial());
         }
         return sb.toString();
     }

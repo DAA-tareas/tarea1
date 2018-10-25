@@ -16,10 +16,16 @@ public class Database {
         this.path = file;
     }
 
-    void add(String toAdd) throws IOException{
-        BufferedWriter out = null;
+    void add(Nodo toAdd) throws IOException{
+        ArrayList<Nodo> a = new ArrayList<Nodo>();
+        a.add(toAdd);
+        add(a);
+    }
 
+    void add(ArrayList<Nodo> nodoList) throws IOException{
+        BufferedWriter out = null;
         try {
+            String toAdd = serialize(nodoList);
             FileWriter fstream = new FileWriter(this.path, true); //true tells to append data.
             out = new BufferedWriter(fstream);
             out.write(toAdd + "\r\n");
@@ -38,7 +44,7 @@ public class Database {
     public String serialize(ArrayList<Nodo> nList){
         StringBuffer sb = new StringBuffer();
         for(Nodo n : nList){
-            sb.append(n.makeSerial() + "\r\n");
+            sb.append(n.makeSerial());
         }
         return sb.toString();
     }
@@ -62,9 +68,14 @@ public class Database {
 
     public static void main(String[] args) throws  IOException{
         Database db = new Database("test.txt");
-
-        db.add("Agregando el primer elemento 10");
-        db.add("Segundo elemento 11");
+        Nodo n1 = new NodoProd(1, 20, 100, 3);
+        Nodo n2 = new NodoProd(2, 30, 150, 8);
+        Nodo n3 = new NodoProd(3, 5, 10, 1);
+        ArrayList<Nodo> l = new ArrayList<Nodo>();
+        l.add(n2);
+        l.add(n3);
+        db.add(n1);
+        db.add(l);
 
     }
 }

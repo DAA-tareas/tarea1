@@ -40,6 +40,6 @@ public class NodoProd extends AbstractNodo {
         String pre = Integer.toString(precio);
         String ptsN = Integer.toString(ptosNec);
         String ptsR = Integer.toString(ptosRec);
-        return id + " " + pre + " " + ptsN + " " + ptsR;
+        return id + " " + pre + " " + ptsN + " " + ptsR + "\r\n";
     }
 }

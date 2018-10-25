@@ -24,6 +24,6 @@ public class NodoCons extends AbstractNodo {
     public String makeSerial() {
         String id = Integer.toString(this.getId());
         String p = Integer.toString(ptosAc);
-        return id + " " + rut + " " + p;
+        return id + " " + rut + " " + p + "\r\n";
     }
 }

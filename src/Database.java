@@ -5,7 +5,7 @@ import java.util.List;
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
-    private List <String> secondaryPaths = new ArrayList<>();
+    private List <String> secondaryPaths;
 
     /**
      *
@@ -14,6 +14,7 @@ public class Database {
      */
     public Database(String file){
         this.path = file;
+        this.secondaryPaths = new ArrayList<>();
     }
 
     void add(String toAdd) throws IOException{

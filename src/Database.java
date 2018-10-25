@@ -40,6 +40,7 @@ public class Database {
         for(Nodo n : nList){
             sb.append(n.makeSerial() + "\r\n");
         }
+        
         return sb.toString();
     }
 

@@ -61,6 +61,10 @@ public class Tests {
         for(long l : p1){
             System.out.print(l + " ");
         }
+
+        /*Database db = new Database("testP1Inserciones.txt");
+        db.segmentar(1000, "id");
+        */
         /*
         for(int i : t.getN()){
             System.out.println(i);

@@ -43,7 +43,6 @@ public class Database {
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
         int nFile = 1;
-        File fileAux;
         boolean EOF = false;
         while(!EOF){
 
@@ -60,10 +59,10 @@ public class Database {
                 String[] aNodo = linea.split(" ");
 
                 if (aNodo.length==4){
-                    nodo = new NodoProd(Integer.parseInt(aNodo[0]), Integer.parseInt(aNodo[1]), Integer.parseInt(aNodo[2]), Integer.parseInt(aNodo[3]));
+                    nodo = new NodoProd(Integer.valueOf(aNodo[0]), Integer.valueOf(aNodo[1]), Integer.valueOf(aNodo[2]), Integer.valueOf(aNodo[3]));
                 }
                 else{
-                    nodo = new NodoCons(Integer.parseInt(aNodo[0]), aNodo[1], Integer.parseInt(aNodo[2]));
+                    nodo = new NodoCons(Integer.valueOf(aNodo[0]), aNodo[1], Integer.valueOf(aNodo[2]));
                 }
                 lista.add(nodo);
             }
@@ -72,7 +71,8 @@ public class Database {
             lista =  ord.ordenarSec(lista, field);
             String aArchivo = serialize(lista);
 
-            fileAux = new File(Integer.toString(nFile) + ".txt");
+
+            File fileAux = new File(Integer.toString(nFile) + ".txt");
             BufferedWriter bw = new BufferedWriter(new FileWriter(fileAux));
             bw.write(aArchivo);
 

@@ -184,7 +184,7 @@ public class Database {
                     while(bufferToWrite.size() < B && buffer1.size() > 0 && buffer2.size() > 0){
                         // Comparar los nodos
                         // Nodo1 < Nodo2 => Se agrega Nodo1 en bufferToWrite
-                        if(true){//if(buffer1.get(0).compare(buffer2.get(0), mergeAttr) < 0){
+                        if(buffer1.get(0).compareBy(buffer2.get(0), mergeAttr) > 0){
                             bufferToWrite.add(buffer1.get(0));
                             //Borrar elemento
                             buffer1.remove(0);

@@ -1,6 +1,9 @@
 import java.lang.StringBuffer;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class Tests {
 
@@ -14,57 +17,83 @@ public class Tests {
     }
 
 
-    public long[] P1Inserciones() throws IOException{
-        Database db = new Database("testP1Inserciones.txt");
-        long[] times = new long[N.length];
-        ArrayList<Nodo> nodoList = new ArrayList<Nodo>();
-        int[] diskAccess = new int[7];
+    public void P1Inserciones(int i) throws IOException{
+        Database db = new Database("testP1Inserciones-" + i + ".txt");
+        long deltaTime = 0;
+        List<Nodo> nodoList = new ArrayList<Nodo>();
+        int diskAccess = 0;
 
-        for(int i=0; i<N.length; i++){
-            long iniTime = System.currentTimeMillis();
-            for(int n=0; n<this.N[i]; n++){
-                Nodo nodo = new NodoCons(n, "hola"+n, n);
-                nodoList.add(nodo);
-                //Realizar inserciones
-                if (n%Math.pow(10,5) == 0) {
-                    if(n > 0) {
-                        db.add(nodoList);
-                        nodoList = new ArrayList<Nodo>();
-                        diskAccess[i]++;
-                    }
+        List<Integer> randomList = new ArrayList<>();
+        //Generar datos random
+        for(int n=0; n<i; n++){
+            randomList.add(n);
+        }
+        Collections.shuffle(randomList);
+
+        long iniTime = System.currentTimeMillis();
+        for(int n : randomList){
+            Nodo nodo = new NodoCons(n, "hola"+n, n);
+            nodoList.add(nodo);
+            //Realizar inserciones
+            if (n%Math.pow(10,5) == 0) {
+                if(n > 0) {
+                    db.add(nodoList);
+                    nodoList = new ArrayList<Nodo>();
+                    diskAccess++;
                 }
             }
-            if (nodoList.size() > 0) {
-                db.add(nodoList);
-                diskAccess[i]++;
-            }
-
-            long finTime = System.currentTimeMillis();
-
-            times[i] = finTime - iniTime;
         }
-        System.out.println("Accesos totales a discos");
-        for (int i = 0; i<diskAccess.length; i++) {
-            System.out.print(diskAccess[i] + " ");
+
+        if (nodoList.size() > 0) {
+            db.add(nodoList);
+            diskAccess++;
         }
-        return times;
+
+        long finTime = System.currentTimeMillis();
+
+        deltaTime = finTime - iniTime;
+
+        System.out.println("Numero potencia (N): " + i);
+        System.out.println("Tiempo total: " + deltaTime);
+        System.out.println("Accesos totales a discos: " + diskAccess);
     }
+
+    public void P1Ordenar(String filepath, String field, int i) throws IOException{
+        Database db = new Database(filepath);
+        long iniTime = System.currentTimeMillis();
+        db.ordenar(field);
+        long finTime = System.currentTimeMillis();
+        long deltaTime = finTime - iniTime;
+
+        System.out.println("Numero potencia (N): " + i);
+        System.out.println("Tiempo total: " + deltaTime);
+        System.out.println("Accesos totales a discos: " + db.getAccessDisk());
+
+
+    }
+
 
     int[] getN(){
         return this.N;
     }
 
     public static void main(String[] args) throws IOException{
-        /*Tests t = new Tests();
-        long[] p1 = t.P1Inserciones();
-        System.out.println();
-        System.out.println("Timepos en milisegundos");
-        for(long l : p1){
-            System.out.print(l + " ");
-        }*/
+        /*
+        Tests t1 = new Tests();
+        for(int n : t1.getN()){
+            t1.P1Inserciones(n);
+            System.out.println();
+        }
+        */
+        Tests t2 = new Tests();
+        //for(int n : t2.getN()){
+        for(int n=0; n<1; n++){
+            t2.P1Ordenar("testP1Inserciones-1000000.txt" ,"id", 6);
+            System.out.println();
+        }
 
-        Database db = new Database("testP1Inserciones.txt");
-        db.segmentar(1837, "id");
+        //Database db = new Database("testP1Inserciones.txt");
+        //db.segmentar(1837, "id");
 
         /*
         for(int i : t.getN()){

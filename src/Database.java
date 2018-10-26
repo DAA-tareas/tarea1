@@ -7,12 +7,17 @@ public class Database {
     private String path;
     private List <String> secondaryPaths;
     private int B;
+    private int accessDisk;
 
 
     public Database(String filepath){
         this.path = filepath;
         this.B = (int)Math.pow(10, 5);
         secondaryPaths = new ArrayList<>();
+    }
+
+    public int getAccessDisk(){
+        return this.accessDisk;
     }
 
     void add(Nodo toAdd) throws IOException{
@@ -41,46 +46,57 @@ public class Database {
 
 
     /**metodo que escribe la info del archivo en archivos de tamaño B
-     * @param B el tamaño de los segmentos
      */
-    void segmentar(int B, String field) throws IOException{
+    public void segmentar(String field) throws IOException{
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
         int nFile = 1;
         boolean EOF = false;
-        while(!EOF){
+        Ordenador ord = new Ordenador();
+        while(br.ready()){
 
             List<Nodo> lista = new ArrayList<>();
             String linea;
 
-            for (int i = 0; i < B; i++){
+            for (int i = 0; i < this.B; i++){
                 Nodo nodo;
 
-                if((linea = br.readLine())==null) {
+                if((linea = br.readLine()) == null) {
                     EOF = true;
                     break;
                 }
+                // Acceso a disco
+                this.accessDisk++;
+
                 String[] aNodo = linea.split(" ");
+                //System.out.println("Largo lista: " + aNodo.length);
+                /*
                 System.out.println(aNodo[0]);
                 System.out.println(aNodo[1]);
                 System.out.println(aNodo[2]);
+                */
 
                 if (aNodo.length==4){
                     nodo = new NodoProd(Integer.valueOf(aNodo[0]), Integer.valueOf(aNodo[1]), Integer.valueOf(aNodo[2]), Integer.valueOf(aNodo[3]));
+                    lista.add(nodo);
+                }
+                else if(aNodo.length == 3){
+                    nodo = new NodoCons(Integer.valueOf(aNodo[0]), aNodo[1], Integer.valueOf(aNodo[2]));
+                    lista.add(nodo);
                 }
                 else{
-                    nodo = new NodoCons(Integer.valueOf(aNodo[0]), aNodo[1], Integer.valueOf(aNodo[2]));
+                    System.out.println("La wea es: " + aNodo.length);
                 }
-                lista.add(nodo);
+
             }
 
-            Ordenador ord = new Ordenador();
+
             List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
 
             Database db = new Database(nFile + ".txt");
             db.add(listaOrdenada);
 
-            secondaryPaths.add(nFile + ".txt");
+            this.secondaryPaths.add(nFile + ".txt");
             nFile++;
 
         }
@@ -99,15 +115,17 @@ public class Database {
     /**
      * Metodo que ordena segun un atributo
      * Utiliza MergeSort
-     * @param attribute atributo por el que ordena
+     * @param field atributo por el que ordena
      */
-    void ordenar(String attribute){
+    void ordenar(String field) throws IOException{
         // Del archivo enorme (llamese A)
-        // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno
-        // Ordenar cada uno de los k bloques particularmente
-        // Recursivamente || Caso base: k = 1
-        // Agrupar de a 2 bloques, leer 10^5/2 nodos de cada bloque
-        // Crear un archivo ordenado, agregando 10^5 nodos hasta acabar elementos de ambos archivos
+        // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno y ordenarlos
+        this.segmentar(field);
+        // Mientras no se hayan mergeado todos los archivos
+        while(this.secondaryPaths.size() != 1){
+            // Agrupar de a 2 bloques, leer 10^5/2 nodos de cada bloque
+            this.merger(field);
+        }
 
 
     }
@@ -144,6 +162,8 @@ public class Database {
                 while(br1.ready() || br2.ready()) {
                     // Se lleno el buffer de escritura
                     if(bufferToWrite.size() >= B){
+                        // Acceso a disco
+                        this.accessDisk++;
                         // Escribirlo en el archivo
                         fw.write(this.serialize(bufferToWrite));
                         // Vaciar buffer de escritura
@@ -154,30 +174,37 @@ public class Database {
                         String el1;
                         int b = 0;
                         while((el1 = br1.readLine()) != null && b < B/2){
+                            // Acceso a disco
+                            this.accessDisk++;
                             // Nodo Cons
                             if (el1.split(" ").length == 3) {
                                 buffer1.add(new NodoCons(el1));
+                                b++;
                             }
                             // Nodo Prod
-                            else {
+                            else if(el1.split(" ").length == 4){
                                 buffer1.add(new NodoProd(el1));
+                                b++;
                             }
-                            b++;
+
                         }
                     }
                     if (buffer2.size() == 0){
                         String el2;
                         int b = 0;
                         while((el2 = br2.readLine()) != null && b < B/2){
+                            // Acceso a disco
+                            this.accessDisk++;
                             // Nodo Cons
                             if (el2.split(" ").length == 3) {
                                 buffer2.add(new NodoCons(el2));
+                                b++;
                             }
                             // Nodo Prod
-                            else {
+                            else if(el2.split(" ").length == 4){
                                 buffer2.add(new NodoProd(el2));
+                                b++;
                             }
-                            b++;
                         }
                     }
                     // Mientras el buffer a escribir tenga menos de B elementos
@@ -216,6 +243,8 @@ public class Database {
                 }
                 // Si se acabaron los elementos y no escribio la "cola"
                 if(bufferToWrite.size() > 0){
+                    // Acceso a disco
+                    this.accessDisk++;
                     // Escribirlo en el archivo
                     fw.write(this.serialize(bufferToWrite));
                 }

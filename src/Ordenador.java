@@ -35,55 +35,61 @@ public class Ordenador {
     }
 
     public static List<Nodo> ordenarSec(List<Nodo> listaNodos, String fld){
-        try{
-            Field field = listaNodos.get(0).getClass().getDeclaredField(fld);
-            field.setAccessible(true);
+        if(listaNodos.size() > 0){
             try{
-                if(field.get(listaNodos.get(0)) instanceof String){
-                    stringQuickSort sorter = new stringQuickSort();
-                    return sorter.sort(listaNodos, field);
-                }
-                else{
-                    System.out.println("es int!");
-                    intQuickSort sorter = new intQuickSort();
-                    return sorter.sort(listaNodos, field);
-                }
-            }
-
-
-            catch(java.lang.IllegalAccessException e){
-                System.out.println("Illegal acces!");
-            }
-        }
-        catch (java.lang.NoSuchFieldException e){
-            try{
-
-                Field field = listaNodos.get(0).getClass().getSuperclass().getDeclaredField(fld);
+                Field field = listaNodos.get(0).getClass().getDeclaredField(fld);
                 field.setAccessible(true);
                 try{
                     if(field.get(listaNodos.get(0)) instanceof String){
-                        System.out.print("");
                         stringQuickSort sorter = new stringQuickSort();
                         return sorter.sort(listaNodos, field);
                     }
                     else{
                         System.out.println("es int!");
-                        System.out.println(field.get(listaNodos.get(0)));
                         intQuickSort sorter = new intQuickSort();
                         return sorter.sort(listaNodos, field);
                     }
                 }
 
 
-                catch(java.lang.IllegalAccessException b){
+                catch(java.lang.IllegalAccessException e){
                     System.out.println("Illegal acces!");
                 }
-
             }
-            catch(java.lang.NoSuchFieldException a){
-                System.out.println("Atributo no existe!");
+            catch (java.lang.NoSuchFieldException e){
+                try{
+
+                    Field field = listaNodos.get(0).getClass().getSuperclass().getDeclaredField(fld);
+                    field.setAccessible(true);
+                    try{
+                        if(field.get(listaNodos.get(0)) instanceof String){
+                            System.out.print("");
+                            stringQuickSort sorter = new stringQuickSort();
+                            return sorter.sort(listaNodos, field);
+                        }
+                        else{
+                            System.out.println("es int!");
+                            System.out.println(field.get(listaNodos.get(0)));
+                            intQuickSort sorter = new intQuickSort();
+                            return sorter.sort(listaNodos, field);
+                        }
+                    }
+
+
+                    catch(java.lang.IllegalAccessException b){
+                        System.out.println("Illegal acces!");
+                    }
+
+                }
+                catch(java.lang.NoSuchFieldException a){
+                    System.out.println("Atributo no existe!");
+                }
             }
         }
+        else{
+            System.out.println("Lista largo 0 en ordenSec");
+        }
+
         return null;
     }
 

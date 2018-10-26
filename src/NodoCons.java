@@ -9,6 +9,13 @@ public class NodoCons extends AbstractNodo {
         this.ptosAc = p;
     }
 
+    public NodoCons(String atributos){
+        super(Integer.parseInt(atributos.split(" ")[0]));
+        String[] atrSpl = atributos.split(" ");
+        this.rut = atrSpl[1];
+        this.ptosAc = Integer.parseInt(atrSpl[2]);
+    }
+
     public String getRut(){
         return rut;
     }

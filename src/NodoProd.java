@@ -11,6 +11,14 @@ public class NodoProd extends AbstractNodo {
         this.ptosRec = r;
     }
 
+    public NodoProd(String atributos){
+        super(Integer.parseInt(atributos.split(" ")[0]));
+        String[] atrSpl = atributos.split(" ");
+        this.precio = Integer.parseInt(atrSpl[1]);
+        this.ptosNec = Integer.parseInt(atrSpl[2]);
+        this.ptosRec = Integer.parseInt(atrSpl[3]);
+    }
+
     public int getPrecio(){
         return precio;
     }

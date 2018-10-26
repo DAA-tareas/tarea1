@@ -1,19 +1,18 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
+    private List<String> secondaryPaths;
+    private int B;
 
-    /**
-     *
-     * @param file
-     * @throws IOException
-     */
-    public Database(String file){
-        this.path = file;
+
+    public Database(String filepath){
+        this.path = filepath;
+        this.B = (int)Math.pow(10, 5);
+        secondaryPaths = new ArrayList<>();
     }
 
     void add(String toAdd) throws IOException{
@@ -35,11 +34,20 @@ public class Database {
     }
 
 
-    public String serialize(ArrayList<Nodo> nList){
+    /**metodo que escribe la info del archivo en archivos de tamaño B
+     * @param B el tamaño de los segmentos
+     */
+    void segmentar(int B){
+        File file = new File(path);
+
+    }
+
+    public String serialize(List<Nodo> nList){
         StringBuffer sb = new StringBuffer();
         for(Nodo n : nList){
             sb.append(n.makeSerial() + "\r\n");
         }
+
         return sb.toString();
     }
 
@@ -57,14 +65,146 @@ public class Database {
         // Crear un archivo ordenado, agregando 10^5 nodos hasta acabar elementos de ambos archivos
 
 
-        return;
     }
+
+    public void merger(String mergeAttr) throws IOException{
+        // Hacer una copia de los secondaryPaths
+        List<String> copySecPaths = new ArrayList<>();
+        copySecPaths.addAll(this.secondaryPaths);
+        // Clear secondaryPaths
+        this.secondaryPaths.clear();
+        // Cada 2 archivos
+        for(int i=0; i<copySecPaths.size(); i+=2){
+            // Numero impar de Archivos => El ultimo archivo se escribe directamente
+            if(i == copySecPaths.size() - 1 && copySecPaths.size() % 2 != 0){ //
+                this.secondaryPaths.add(copySecPaths.get(i));
+                break;
+            }
+            // 2 Archivos .txt
+            String file1 = copySecPaths.get(i);
+            String file2 = copySecPaths.get(i+1);
+            // Nombres de archivos sin .txt
+            String name1 = file1.split(".txt")[0];
+            String name2 = file2.split(".txt")[0];
+            String fileToWriteName = name1 + "-" + name2 + ".txt";
+            try {
+                // Abrir un buffer para los 2 archivos
+                BufferedReader br1 = new BufferedReader(new FileReader(file1));
+                BufferedReader br2 = new BufferedReader(new FileReader(file2));
+                FileWriter fw = new FileWriter(fileToWriteName, true);
+                List<Nodo> buffer1 = new ArrayList<>();
+                List<Nodo> buffer2 = new ArrayList<>();
+                List<Nodo> bufferToWrite = new ArrayList<>();
+                // Mientras existan elementos en algun archivo
+                while(br1.ready() || br2.ready()) {
+                    // Se lleno el buffer de escritura
+                    if(bufferToWrite.size() >= B){
+                        // Escribirlo en el archivo
+                        fw.write(this.serialize(bufferToWrite));
+                        // Vaciar buffer de escritura
+                        bufferToWrite = new ArrayList<>();
+                    }
+                    // Recorrer B/2 elementos de cada archivo. Almacenar Nodos en listas
+                    if(buffer1.size() == 0){
+                        String el1;
+                        int b = 0;
+                        while((el1 = br1.readLine()) != null && b < B/2){
+                            // Nodo Cons
+                            if (el1.split(" ").length == 3) {
+                                buffer1.add(new NodoCons(el1));
+                            }
+                            // Nodo Prod
+                            else {
+                                buffer1.add(new NodoProd(el1));
+                            }
+                            b++;
+                        }
+                    }
+                    if (buffer2.size() == 0){
+                        String el2;
+                        int b = 0;
+                        while((el2 = br2.readLine()) != null && b < B/2){
+                            // Nodo Cons
+                            if (el2.split(" ").length == 3) {
+                                buffer2.add(new NodoCons(el2));
+                            }
+                            // Nodo Prod
+                            else {
+                                buffer2.add(new NodoProd(el2));
+                            }
+                            b++;
+                        }
+                    }
+                    // Mientras el buffer a escribir tenga menos de B elementos
+                    while(bufferToWrite.size() < B && buffer1.size() > 0 && buffer2.size() > 0){
+                        // Comparar los nodos
+                        // Nodo1 < Nodo2 => Se agrega Nodo1 en bufferToWrite
+                        if(true){//if(buffer1.get(0).compare(buffer2.get(0), mergeAttr) < 0){
+                            bufferToWrite.add(buffer1.get(0));
+                            //Borrar elemento
+                            buffer1.remove(0);
+                        }else{ // Nodo1 >= Nodo2 => Agregar Nodo2 en bufferToWrite
+                            bufferToWrite.add(buffer2.get(0));
+                            //Borrar elemento
+                            buffer2.remove(0);
+                        }
+                    }
+                    // Si se acaba 1 archivo completo, hay que appendiar el restante
+                    // Se acabo el br1
+                    if(!br1.ready()){
+                        //Escribir el br2
+                        while(bufferToWrite.size() < B && buffer2.size() > 0){
+                            bufferToWrite.add(buffer2.get(0));
+                            //Borrar elemento
+                            buffer2.remove(0);
+                        }
+                    }
+                    if(!br2.ready()){
+                        //Escribir el br2
+                        while(bufferToWrite.size() < B && buffer1.size() > 0){
+                            bufferToWrite.add(buffer1.get(0));
+                            //Borrar elemento
+                            buffer1.remove(0);
+                        }
+                    }
+
+                }
+                // Si se acabaron los elementos y no escribio la "cola"
+                if(bufferToWrite.size() > 0){
+                    // Escribirlo en el archivo
+                    fw.write(this.serialize(bufferToWrite));
+                }
+                // Agregar archivo mergeado a secondaryPaths
+                this.secondaryPaths.add(fileToWriteName);
+                // Cerrar BufferedReaders, FileWriters
+                br1.close();
+                br2.close();
+                fw.close();
+                // Borrar archivos br1, br2?
+
+            }
+            catch (FileNotFoundException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+
+        }
+    }
+
+    public List<String> A = new ArrayList<>();
 
     public static void main(String[] args) throws  IOException{
         Database db = new Database("test.txt");
+        db.A.add("El1");
+        db.A.add("El2");
+        System.out.println(db.A);
+        List<String> B = new ArrayList<>();
+        B.addAll(db.A);
 
-        db.add("Agregando el primer elemento 10");
-        db.add("Segundo elemento 11");
+        System.out.println(B);
+        db.A.clear();
+        System.out.println(db.A);
+        System.out.println(B);
+
 
     }
 }

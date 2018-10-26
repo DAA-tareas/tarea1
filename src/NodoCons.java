@@ -26,4 +26,24 @@ public class NodoCons extends AbstractNodo {
         String p = Integer.toString(ptosAc);
         return id + " " + rut + " " + p + "\r\n";
     }
+
+    public int compareBy(Nodo p, String f){
+        return p.compareToNodoCons(this, f);
+    }
+
+    public int compareToNodoCons(NodoCons p , String f){
+        if (f.equals("id")) {
+            return this.getId() - p.getId();
+        } else if (f.equals("rut")){
+            return this.getRut().compareTo(p.getRut());
+        } else if (f.equals("ptosAc")){
+            return this.getPtosAc() - p.getPtosAc();
+        } else {
+            return 0;
+        }
+    }
+
+    public int compareToNodoProd(NodoProd p, String f){
+        return this.getPtosAc() - p.getPtosNec();
+    }
 }

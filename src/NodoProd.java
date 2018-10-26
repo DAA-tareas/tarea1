@@ -42,4 +42,26 @@ public class NodoProd extends AbstractNodo {
         String ptsR = Integer.toString(ptosRec);
         return id + " " + pre + " " + ptsN + " " + ptsR + "\r\n";
     }
+
+    public int compareBy(Nodo p, String f){
+        return p.compareToNodoProd(this, f);
+    }
+
+    public int compareToNodoCons(NodoCons p , String f){
+        return this.getPtosNec() - p.getPtosAc();
+    }
+
+    public int compareToNodoProd(NodoProd p, String f){
+        if (f.equals("id")) {
+            return this.getId() - p.getId();
+        } else if (f.equals("precio")){
+            return this.getPrecio() - p.getPrecio();
+        } else if (f.equals("ptosNec")){
+            return this.getPtosNec() - p.getPtosNec();
+        } else if (f.equals("ptosRec")){
+            return this.getPtosRec() - p.getPtosRec();
+        } else {
+            return 0;
+        }
+    }
 }

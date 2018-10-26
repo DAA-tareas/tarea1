@@ -1,4 +1,5 @@
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +7,7 @@ import java.util.ArrayList;
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
+    private String[] secondaryPaths;
 
     /**
      *
@@ -34,6 +36,14 @@ public class Database {
         }
     }
 
+
+    /**metodo que escribe la info del archivo en archivos de tamaño B
+     * @param B el tamaño de los segmentos
+     */
+    void segmentar(int B){
+        File file = new File(path);
+
+    }
 
     public String serialize(ArrayList<Nodo> nList){
         StringBuffer sb = new StringBuffer();

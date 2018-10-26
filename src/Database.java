@@ -5,7 +5,7 @@ import java.util.List;
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
-    private List<String> secondaryPaths;
+    private List <String> secondaryPaths;
     private int B;
 
 
@@ -15,10 +15,16 @@ public class Database {
         secondaryPaths = new ArrayList<>();
     }
 
-    void add(String toAdd) throws IOException{
-        BufferedWriter out = null;
+    void add(Nodo toAdd) throws IOException{
+        ArrayList<Nodo> a = new ArrayList<Nodo>();
+        a.add(toAdd);
+        add(a);
+    }
 
+    void add(List<Nodo> nodoList) throws IOException{
+        BufferedWriter out = null;
         try {
+            String toAdd = serialize(nodoList);
             FileWriter fstream = new FileWriter(this.path, true); //true tells to append data.
             out = new BufferedWriter(fstream);
             out.write(toAdd + "\r\n");
@@ -37,17 +43,56 @@ public class Database {
     /**metodo que escribe la info del archivo en archivos de tamaño B
      * @param B el tamaño de los segmentos
      */
-    void segmentar(int B){
+    void segmentar(int B, String field) throws IOException{
         File file = new File(path);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        int nFile = 1;
+        boolean EOF = false;
+        while(!EOF){
+
+            List<Nodo> lista = new ArrayList<>();
+            String linea;
+
+            for (int i = 0; i < B; i++){
+                Nodo nodo;
+
+                if((linea = br.readLine())==null) {
+                    EOF = true;
+                    break;
+                }
+                String[] aNodo = linea.split(" ");
+                System.out.println(aNodo[0]);
+                System.out.println(aNodo[1]);
+                System.out.println(aNodo[2]);
+
+                if (aNodo.length==4){
+                    nodo = new NodoProd(Integer.valueOf(aNodo[0]), Integer.valueOf(aNodo[1]), Integer.valueOf(aNodo[2]), Integer.valueOf(aNodo[3]));
+                }
+                else{
+                    nodo = new NodoCons(Integer.valueOf(aNodo[0]), aNodo[1], Integer.valueOf(aNodo[2]));
+                }
+                lista.add(nodo);
+            }
+
+            Ordenador ord = new Ordenador();
+            List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
+
+            Database db = new Database(nFile + ".txt");
+            db.add(listaOrdenada);
+
+            secondaryPaths.add(nFile + ".txt");
+            nFile++;
+
+        }
+
 
     }
 
     public String serialize(List<Nodo> nList){
         StringBuffer sb = new StringBuffer();
         for(Nodo n : nList){
-            sb.append(n.makeSerial() + "\r\n");
+            sb.append(n.makeSerial());
         }
-
         return sb.toString();
     }
 

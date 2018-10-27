@@ -51,7 +51,6 @@ public class Database {
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
         int nFile = 1;
-        boolean EOF = false;
         Ordenador ord = new Ordenador();
         while(br.ready()){
 
@@ -61,10 +60,7 @@ public class Database {
             for (int i = 0; i < this.B; i++){
                 Nodo nodo;
 
-                if((linea = br.readLine()) == null) {
-                    EOF = true;
-                    break;
-                }
+                if((linea = br.readLine()) == null) break;
                 // Acceso a disco
                 this.accessDisk++;
 

@@ -56,7 +56,7 @@ public class Tests {
         System.out.println("Accesos totales a discos: " + diskAccess);
     }
 
-    public void P1Ordenar(String filepath, String field, int i) throws IOException{
+    public Database P1Ordenar(String filepath, String field, int i) throws IOException{
         Database db = new Database(filepath);
         long iniTime = System.currentTimeMillis();
         db.ordenar(field);
@@ -67,28 +67,53 @@ public class Tests {
         System.out.println("Tiempo total: " + deltaTime);
         System.out.println("Accesos totales a discos: " + db.getAccessDisk());
 
-
+        return db;
     }
-
 
     int[] getN(){
         return this.N;
     }
 
-    public static void main(String[] args) throws IOException{
+    public void P2BTree(String filepath, String field, int i) throws IOException, NoSuchFieldException, IllegalAccessException{
+        Database db = P1Ordenar(filepath, field, i);
+        db.bTreeIni();
+        long iniTime = System.currentTimeMillis();
+        Map<String, Nodo> m = db.firstOfPaths();
+        for (Map.Entry<String, Nodo> entry : m.entrySet()){
+            db.insertBTree(field, entry.getValue(), entry.getKey());
+        }
+        long finTime = System.currentTimeMillis();
+        long deltaTime = finTime - iniTime;
+
+        System.out.println(db.getPartionPaths());
+        System.out.println("--o--");
+        System.out.println(db.getBTree().toString());
+
+        System.out.println("Numero potencia (N): " + i);
+        System.out.println("Tiempo total: " + deltaTime);
+        System.out.println("Accesos totales a discos: " + db.getAccessDisk());
+    }
+
+    public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
         /*
         Tests t1 = new Tests();
         for(int n : t1.getN()){
             t1.P1Inserciones(n);
             System.out.println();
         }
-        */
+
         Tests t2 = new Tests();
         //for(int n : t2.getN()){
         for(int n=0; n<1; n++){
-            t2.P1Ordenar("testP1Inserciones-10.txt" ,"id", 6);
+            t2.P1Ordenar("testP1Inserciones-1000000.txt" ,"id", 6);
             System.out.println();
         }
+*/
+        Tests t3 = new Tests();
+        t3.P2BTree("testP1Inserciones-1000000.txt", "id", 6);
+
+
+
 
         //Database db = new Database("testP1Inserciones.txt");
         //db.segmentar(1837, "id");

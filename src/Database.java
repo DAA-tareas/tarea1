@@ -1,19 +1,24 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
     private List <String> secondaryPaths;
+    private List <String> partionPaths;
     private int B;
     private int accessDisk;
+    private bTree index;
 
 
     public Database(String filepath){
         this.path = filepath;
         this.B = (int)Math.pow(10, 5);
         secondaryPaths = new ArrayList<>();
+        partionPaths = new ArrayList<>();
     }
 
     public int getAccessDisk(){
@@ -94,6 +99,9 @@ public class Database {
             this.accessDisk++;
 
         }
+
+        //Copiar secondaryPaths en partionPaths
+        this.partionPaths.addAll(this.secondaryPaths);
 
 
     }
@@ -255,6 +263,44 @@ public class Database {
 
         }
     }
+
+    /**
+     * Entrega el primer nodo de todos los archivos
+     */
+    public Map<String, Nodo> firstOfPaths() throws IOException{
+        Map<String, Nodo> m = new HashMap<String, Nodo>();
+        for(String p : this.partionPaths){
+            BufferedReader br = new BufferedReader(new FileReader(p));
+            String line = br.readLine();
+            br.close();
+            if(line.split(" ").length == 3){
+                Nodo n = new NodoCons(line);
+                m.put(p, n);
+            }else if(line.split( " ").length == 4){
+                Nodo n = new NodoProd(line);
+                m.put(p, n);
+            }
+        }
+        return m;
+
+    }
+
+    public List<String> getPartionPaths(){
+        return this.partionPaths;
+    }
+
+    public void bTreeIni(){
+        this.index = new bTree();
+    }
+
+    public void insertBTree(String key, Nodo val, String path) throws NoSuchFieldException, IllegalAccessException, IOException{
+        this.index.put(key, val, path);
+    }
+
+    public bTree getBTree(){
+        return this.index;
+    }
+
 
     public List<String> A = new ArrayList<>();
 

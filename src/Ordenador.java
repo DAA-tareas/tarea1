@@ -70,7 +70,7 @@ public class Ordenador {
                             return sorter.sort(listaNodos, field);
                         }
                         else{
-                            System.out.println(field.get(listaNodos.get(0)));
+                            //System.out.println(field.get(listaNodos.get(0)));
                             intQuickSort sorter = new intQuickSort();
                             return sorter.sort(listaNodos, field);
                         }

@@ -53,7 +53,8 @@ public class Database {
         int nFile = 1;
         Ordenador ord = new Ordenador();
         while(br.ready()){
-
+            // Acceso a disco
+            this.accessDisk++;
             List<Nodo> lista = new ArrayList<>();
             String linea;
 
@@ -61,8 +62,6 @@ public class Database {
                 Nodo nodo;
 
                 if((linea = br.readLine()) == null) break;
-                // Acceso a disco
-                this.accessDisk++;
 
                 String[] aNodo = linea.split(" ");
                 //System.out.println("Largo lista: " + aNodo.length);
@@ -80,9 +79,6 @@ public class Database {
                     nodo = new NodoCons(Integer.valueOf(aNodo[0]), aNodo[1], Integer.valueOf(aNodo[2]));
                     lista.add(nodo);
                 }
-                else{
-                    System.out.println("La wea es: " + aNodo.length);
-                }
 
             }
 
@@ -94,6 +90,8 @@ public class Database {
 
             this.secondaryPaths.add(nFile + ".txt");
             nFile++;
+            // Acceso a disco - escritura
+            this.accessDisk++;
 
         }
 
@@ -117,16 +115,18 @@ public class Database {
         // Del archivo enorme (llamese A)
         // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno y ordenarlos
         this.segmentar(field);
+        int numIter = 1;
         // Mientras no se hayan mergeado todos los archivos
         while(this.secondaryPaths.size() != 1){
             // Agrupar de a 2 bloques, leer 10^5/2 nodos de cada bloque
-            this.merger(field);
+            this.merger(field, numIter);
+            numIter++;
         }
 
 
     }
 
-    public void merger(String mergeAttr) throws IOException{
+    public void merger(String mergeAttr, int numIter) throws IOException{
         // Hacer una copia de los secondaryPaths
         List<String> copySecPaths = new ArrayList<>();
         copySecPaths.addAll(this.secondaryPaths);
@@ -139,13 +139,15 @@ public class Database {
                 this.secondaryPaths.add(copySecPaths.get(i));
                 break;
             }
+            // Acceso a disco - 2 lecturas de archivos
+            this.accessDisk += 2;
             // 2 Archivos .txt
             String file1 = copySecPaths.get(i);
             String file2 = copySecPaths.get(i+1);
             // Nombres de archivos sin .txt
             String name1 = file1.split(".txt")[0];
             String name2 = file2.split(".txt")[0];
-            String fileToWriteName = name1 + "-" + name2 + ".txt";
+            String fileToWriteName = "i" + numIter + "-" + name1 + ".txt";
             try {
                 // Abrir un buffer para los 2 archivos
                 BufferedReader br1 = new BufferedReader(new FileReader(file1));
@@ -158,8 +160,6 @@ public class Database {
                 while(br1.ready() || br2.ready()) {
                     // Se lleno el buffer de escritura
                     if(bufferToWrite.size() >= B){
-                        // Acceso a disco
-                        this.accessDisk++;
                         // Escribirlo en el archivo
                         fw.write(this.serialize(bufferToWrite));
                         // Vaciar buffer de escritura
@@ -170,8 +170,6 @@ public class Database {
                         String el1;
                         int b = 0;
                         while((el1 = br1.readLine()) != null && b < B/2){
-                            // Acceso a disco
-                            this.accessDisk++;
                             // Nodo Cons
                             if (el1.split(" ").length == 3) {
                                 buffer1.add(new NodoCons(el1));
@@ -189,8 +187,6 @@ public class Database {
                         String el2;
                         int b = 0;
                         while((el2 = br2.readLine()) != null && b < B/2){
-                            // Acceso a disco
-                            this.accessDisk++;
                             // Nodo Cons
                             if (el2.split(" ").length == 3) {
                                 buffer2.add(new NodoCons(el2));

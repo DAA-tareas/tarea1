@@ -19,18 +19,21 @@ public class Ordenador {
             fields.add(field);
         }
         for (int i = 0; i<lista.size();i++){
-            for(int field = 0; field < fields.size(); field++){
-                fields.get(field).setAccessible(true);
-                try {
-                    System.out.print(fields.get(field).get(lista.get(i)));
-                    System.out.print("/");
-                }
-                catch(java.lang.IllegalAccessException e){
-                    System.out.println("Illegal access en print!");
-                }
-            }
-
+            printNodo(lista.get(i), fields);
             System.out.println("");
+        }
+    }
+
+    public static void printNodo(Nodo nodo, List<Field> fields){
+        for(int field = 0; field < fields.size(); field++){
+            fields.get(field).setAccessible(true);
+            try {
+                System.out.print(fields.get(field).get(nodo));
+                System.out.print("/");
+            }
+            catch(java.lang.IllegalAccessException e){
+                System.out.println("Illegal access en print!");
+            }
         }
     }
 
@@ -45,7 +48,6 @@ public class Ordenador {
                         return sorter.sort(listaNodos, field);
                     }
                     else{
-                        //System.out.println("es int!");
                         intQuickSort sorter = new intQuickSort();
                         return sorter.sort(listaNodos, field);
                     }
@@ -53,7 +55,7 @@ public class Ordenador {
 
 
                 catch(java.lang.IllegalAccessException e){
-                    System.out.println("Illegal acces!");
+                    System.out.println("Illegal access!");
                 }
             }
             catch (java.lang.NoSuchFieldException e){
@@ -68,8 +70,7 @@ public class Ordenador {
                             return sorter.sort(listaNodos, field);
                         }
                         else{
-                            //System.out.println("es int!");
-                            //System.out.println(field.get(listaNodos.get(0)));
+                            System.out.println(field.get(listaNodos.get(0)));
                             intQuickSort sorter = new intQuickSort();
                             return sorter.sort(listaNodos, field);
                         }
@@ -77,7 +78,7 @@ public class Ordenador {
 
 
                     catch(java.lang.IllegalAccessException b){
-                        System.out.println("Illegal acces!");
+                        System.out.println("Illegal access!");
                     }
 
                 }

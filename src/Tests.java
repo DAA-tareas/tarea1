@@ -1,9 +1,6 @@
 import java.lang.StringBuffer;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Tests {
 
@@ -32,7 +29,8 @@ public class Tests {
 
         long iniTime = System.currentTimeMillis();
         for(int n : randomList){
-            Nodo nodo = new NodoCons(n, "hola"+n, n);
+            Random random = new Random();
+            Nodo nodo = new NodoCons(n, Integer.toString(10000000+n) + "-" + random.nextInt(10), random.nextInt(2000));
             nodoList.add(nodo);
             //Realizar inserciones
             if (n%Math.pow(10,5) == 0) {
@@ -88,7 +86,7 @@ public class Tests {
         Tests t2 = new Tests();
         //for(int n : t2.getN()){
         for(int n=0; n<1; n++){
-            t2.P1Ordenar("testP1Inserciones-10000000.txt" ,"id", 5);
+            t2.P1Ordenar("testP1Inserciones-1000000.txt" ,"id", 6);
             System.out.println();
         }
 

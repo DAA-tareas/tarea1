@@ -88,7 +88,7 @@ public class Tests {
         Tests t2 = new Tests();
         //for(int n : t2.getN()){
         for(int n=0; n<1; n++){
-            t2.P1Ordenar("testP1Inserciones-1000000.txt" ,"id", 6);
+            t2.P1Ordenar("testP1Inserciones-10000000.txt" ,"id", 5);
             System.out.println();
         }
 

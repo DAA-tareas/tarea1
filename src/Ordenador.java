@@ -45,7 +45,7 @@ public class Ordenador {
                         return sorter.sort(listaNodos, field);
                     }
                     else{
-                        System.out.println("es int!");
+                        //System.out.println("es int!");
                         intQuickSort sorter = new intQuickSort();
                         return sorter.sort(listaNodos, field);
                     }
@@ -63,13 +63,13 @@ public class Ordenador {
                     field.setAccessible(true);
                     try{
                         if(field.get(listaNodos.get(0)) instanceof String){
-                            System.out.print("");
+                            //System.out.print("");
                             stringQuickSort sorter = new stringQuickSort();
                             return sorter.sort(listaNodos, field);
                         }
                         else{
-                            System.out.println("es int!");
-                            System.out.println(field.get(listaNodos.get(0)));
+                            //System.out.println("es int!");
+                            //System.out.println(field.get(listaNodos.get(0)));
                             intQuickSort sorter = new intQuickSort();
                             return sorter.sort(listaNodos, field);
                         }

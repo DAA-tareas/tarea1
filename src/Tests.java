@@ -105,36 +105,7 @@ public class Tests {
         for (Map.Entry<String, Nodo> entry : m.entrySet()){
             db.insertBTree(field, entry.getValue(), entry.getKey());
         }
-        System.out.println(db.getBTree());
-        long iniTime = System.currentTimeMillis();
-        Nodo n = db.searchInFile(key);
-        long finTime = System.currentTimeMillis();
-        long deltaTime = finTime - iniTime;
-
-        if(n == null){
-            System.out.println("No Encontrado");
-        }else{
-            System.out.println(n.makeSerial());
-        }
-
-
-        System.out.println("Numero potencia (N): " + i);
-        System.out.println("Tiempo total: " + deltaTime);
-        //System.out.println("Secondary Path: " + db.getSecondaryPaths());
-    }
-
-
-    public void statsTest(String filepath, String field, int i, String key) throws IOException, NoSuchFieldException, IllegalAccessException{
-        Database db = new Database(filepath);
-        db.ordenar(field);
-        db.bTreeIni();
-        Map<String, Nodo> m = db.firstOfPaths();
-        for (Map.Entry<String, Nodo> entry : m.entrySet()){
-            db.insertBTree(field, entry.getValue(), entry.getKey());
-        }
-        db.getBTree().getStats();
         //System.out.println(db.getBTree());
-
         long iniTime = System.currentTimeMillis();
         Nodo n = db.searchInFile(key);
         long finTime = System.currentTimeMillis();
@@ -150,7 +121,6 @@ public class Tests {
         System.out.println("Numero potencia (N): " + i);
         System.out.println("Tiempo total: " + deltaTime);
         //System.out.println("Secondary Path: " + db.getSecondaryPaths());
-
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
@@ -176,8 +146,7 @@ public class Tests {
 
 
         Tests t4 = new Tests();
-        //t4.P2BTreeSearch("testP1Inserciones-1000000.txt", "id", 6, "100020");
-        t4.statsTest("testP1Inserciones-10000000.txt", "id", 6, "7135932");
+        t4.P2BTreeSearch("testP1Inserciones-1000000.txt", "id", 6, "32005");
 
 
 

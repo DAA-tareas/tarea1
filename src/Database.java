@@ -144,7 +144,7 @@ public class Database {
             numIter++;
         }
         this.finalMergedPath = this.secondaryPaths.get(0);
-        System.out.println(this.finalMergedPath);
+        //System.out.println(this.finalMergedPath);
         //System.out.println("secondaryPath size: " + this.secondaryPaths.size());
 
         for(String s : copySecPaths){
@@ -343,7 +343,7 @@ public class Database {
      */
     public Nodo searchInFile(String key) throws IOException{
         String path = this.index.get(key);
-        System.out.println("path=" + path);
+        //System.out.println("path=" + path);
         String indexType = this.index.getIndexedType();
 
         BufferedReader br = new BufferedReader(new FileReader(path));

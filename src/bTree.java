@@ -94,11 +94,13 @@ public class bTree {
         // external node
         if (ht == 0) {
             for (int j = 0; j < x.m; j++) {
+                /*
                 if(j < x.m - 1) {
                     System.out.println("2 " + children[j].key + " < " + key + " < " + children[j+1].key + " ? " + (greater(key, children[j].key) && less(key, children[j + 1].key)));
                 }
+                */
                 if (j+1 == x.m || (greater(key, children[j].key) && less(key, children[j+1].key))){
-                    System.out.println("path entregado: " + children[j].path);
+                    //System.out.println("path entregado: " + children[j].path);
                     return children[j].path;
                 }
             }
@@ -106,11 +108,12 @@ public class bTree {
 
         // internal node
         else {
-            System.out.println(x.m);
             for (int j = 0; j < x.m; j++) {
+                /*
                 if(j < x.m - 1) {
-                    System.out.println("2 " + children[j].key + " < " + key + " < " + children[j+1].key + " ? " + (greater(key, children[j].key) && less(key, children[j + 1].key)));
+                    System.out.println("2 " + children[j].key + " < " + key + " < " + children[j+1].key + " ? " + (greater(key, children[j].key) && less(key, children[j+1].key)));
                 }
+                */
                 if (j+1 == x.m || (greater(key, children[j].key) && less(key, children[j+1].key)))
                     return search(children[j].next, key, ht-1);
             }
@@ -247,11 +250,17 @@ public class bTree {
 
     // comparison functions - make Comparable instead of Key to avoid casts
     private boolean less(Comparable k1, Comparable k2) {
-        return k1.compareTo(k2) < 0;
+        try{
+            int c1 = Integer.valueOf((String)k1);
+            int c2 = Integer.valueOf((String)k2);
+            return c1 < c2;
+        }catch(NumberFormatException e){
+            return k1.compareTo(k2) < 0;
+        }
     }
 
     private boolean greater(Comparable k1, Comparable k2) {
-        return k1.compareTo(k2) > 0;
+        return !less(k1, k2);
     }
 
     private boolean eq(Comparable k1, Comparable k2) {
@@ -261,30 +270,6 @@ public class bTree {
 
     public String getIndexedType(){
         return indexedType;
-    }
-
-
-    public void getStats(){
-        /*
-        System.out.println("root children size: " + this.root.children.length);
-        System.out.println("root height: " + this.height);
-        System.out.println("root hojas: " + this.n);
-        for(Entry e : this.root.children){
-            if(e != null){
-                //String path = e.path != null ? e.path : "nodo interno - path";
-                //String key = e.key != null ? e.key : "nodo interno - key";
-                System.out.println("key: " + e.key + " path: " + e.path);
-                System.out.println(e.next.children.length);
-                for(Entry en : e.next.children){
-                    if(en != null)
-                        System.out.println("    key: " + en.key + " path: " + en.path);
-                }
-
-            }
-
-        }
-        */
-        printTree(this.root, this.height);
     }
 
 
@@ -362,8 +347,6 @@ public class bTree {
             System.out.println("size:    " + st.size());
             System.out.println("height:  " + st.height());
             //System.out.println(st.toString());
-
-            st.getStats();
 
         }
         catch (NoSuchFieldException e){

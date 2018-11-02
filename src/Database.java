@@ -9,11 +9,13 @@ import java.util.Map;
 public class Database {
     //estructura subyacente: archivo.txt
     private String path;
+    private String finalMergedPath;
     private List <String> secondaryPaths;
     private List <String> partionPaths;
     private int B;
     private int accessDisk;
     private bTree index;
+
 
 
     public Database(String filepath){
@@ -52,9 +54,11 @@ public class Database {
     }
 
 
-    /**metodo que escribe la info del archivo en archivos de tamaño B
+    /**
+     * Metodo que escribe la info del archivo en archivos de tamaño B
+     * Cada file segmentado, lo guarda en this.secondaryPaths
      */
-    public void segmentar(String field) throws IOException{
+    public void segmentar(String path, String field) throws IOException{
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
         int nFile = 1;
@@ -68,7 +72,7 @@ public class Database {
             for (int i = 0; i < this.B; i++){
                 Nodo nodo;
 
-                if((linea = br.readLine()) == null) break;
+                if((linea = br.readLine()) == null || linea.trim() == "") break;
 
                 String[] aNodo = linea.split(" ");
                 //System.out.println("Largo lista: " + aNodo.length);
@@ -81,24 +85,28 @@ public class Database {
                 if (aNodo.length==4){
                     nodo = new NodoProd(Integer.valueOf(aNodo[0]), Integer.valueOf(aNodo[1]), Integer.valueOf(aNodo[2]), Integer.valueOf(aNodo[3]));
                     lista.add(nodo);
+                    //System.out.println("tamano lista4 " + lista.size());
                 }
                 else if(aNodo.length == 3){
                     nodo = new NodoCons(Integer.valueOf(aNodo[0]), aNodo[1], Integer.valueOf(aNodo[2]));
                     lista.add(nodo);
+                    //System.out.println("tamano lista3 " + lista.size());
                 }
 
             }
 
 
             List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
+            if(listaOrdenada != null){
+                Database db = new Database(nFile + ".txt");
+                db.add(listaOrdenada);
 
-            Database db = new Database(nFile + ".txt");
-            db.add(listaOrdenada);
+                this.secondaryPaths.add(nFile + ".txt");
+                nFile++;
+                // Acceso a disco - escritura
+                this.accessDisk++;
+            }
 
-            this.secondaryPaths.add(nFile + ".txt");
-            nFile++;
-            // Acceso a disco - escritura
-            this.accessDisk++;
 
         }
 
@@ -124,7 +132,7 @@ public class Database {
     void ordenar(String field) throws IOException{
         // Del archivo enorme (llamese A)
         // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno y ordenarlos
-        this.segmentar(field);
+        this.segmentar(this.path, field);
         // Hacer una copia de los secondaryPaths
         List<String> copySecPaths = new ArrayList<>();
         copySecPaths.addAll(this.secondaryPaths);
@@ -135,22 +143,29 @@ public class Database {
             this.merger(field, numIter);
             numIter++;
         }
-        //System.out.println("pasamooooos");
-        if(copySecPaths.size() != 1){
-            for(String s : copySecPaths){
+        this.finalMergedPath = this.secondaryPaths.get(0);
+        System.out.println(this.finalMergedPath);
+        //System.out.println("secondaryPath size: " + this.secondaryPaths.size());
+
+        for(String s : copySecPaths){
+            //Borrar todos los archivos que no sea el ultimo mergeado
+            if(!s.equals(this.finalMergedPath)){
                 //abrir archivo
                 File file = new File(s);
                 //System.out.println(s);
                 //borrarlo
                 file.delete();
+
             }
-            this.path = this.secondaryPaths.get(0);
+        }
+        if(!copySecPaths.get(0).equals(this.finalMergedPath)){
+            //this.path = this.secondaryPaths.get(0);
             this.secondaryPaths.clear();
             //segmentar
-            this.segmentar(field);
+            this.segmentar(this.finalMergedPath, field);
         }
-        this.partionPaths.clear();
-        this.partionPaths.addAll(secondaryPaths);
+
+
     }
 
     public void merger(String mergeAttr, int numIter) throws IOException{
@@ -173,7 +188,7 @@ public class Database {
             String file2 = copySecPaths.get(i+1);
             // Nombres de archivos sin .txt
             String name1 = file1.split(".txt")[0];
-            String name2 = file2.split(".txt")[0];
+            //String name2 = file2.split(".txt")[0];
             String fileToWriteName = "i" + numIter + "-" + name1 + ".txt";
             try {
                 // Abrir un buffer para los 2 archivos
@@ -279,7 +294,6 @@ public class Database {
             catch (FileNotFoundException e) {
                 System.err.println("Error: " + e.getMessage());
             }
-
         }
     }
 
@@ -287,8 +301,8 @@ public class Database {
      * Entrega el primer nodo de todos los archivos
      */
     public Map<String, Nodo> firstOfPaths() throws IOException{
-        Map<String, Nodo> m = new HashMap<String, Nodo>();
-        for(String p : this.partionPaths){
+        Map<String, Nodo> m = new HashMap<>();
+        for(String p : this.secondaryPaths){
             BufferedReader br = new BufferedReader(new FileReader(p));
             String line = br.readLine();
             br.close();
@@ -328,9 +342,9 @@ public class Database {
      * Busqueda en un archivo
      */
     public Nodo searchInFile(String key) throws IOException{
-        String path = index.get(key);
-        //System.out.println("path=" + path);
-        String index = this.index.getIndexedType();
+        String path = this.index.get(key);
+        System.out.println("path=" + path);
+        String indexType = this.index.getIndexedType();
 
         BufferedReader br = new BufferedReader(new FileReader(path));
         //Busqueda sobre el archivo
@@ -345,7 +359,7 @@ public class Database {
             else if(line.split(" ").length == 4){
                 readNodo = new NodoProd(line);
             }
-            if(readNodo != null && readNodo.getAttribute(index).equals(key)){
+            if(readNodo != null && readNodo.getAttribute(indexType).equals(key)){
                 return readNodo;
             }
         }

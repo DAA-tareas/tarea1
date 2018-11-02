@@ -94,7 +94,11 @@ public class bTree {
         // external node
         if (ht == 0) {
             for (int j = 0; j < x.m; j++) {
-                if (greater(key, children[j].key)){
+                if(j < x.m - 1) {
+                    System.out.println("2 " + children[j].key + " < " + key + " < " + children[j+1].key + " ? " + (greater(key, children[j].key) && less(key, children[j + 1].key)));
+                }
+                if (j+1 == x.m || (greater(key, children[j].key) && less(key, children[j+1].key))){
+                    System.out.println("path entregado: " + children[j].path);
                     return children[j].path;
                 }
             }
@@ -102,11 +106,16 @@ public class bTree {
 
         // internal node
         else {
+            System.out.println(x.m);
             for (int j = 0; j < x.m; j++) {
-                if (j+1 == x.m || greater(key, children[j+1].key))
+                if(j < x.m - 1) {
+                    System.out.println("2 " + children[j].key + " < " + key + " < " + children[j+1].key + " ? " + (greater(key, children[j].key) && less(key, children[j + 1].key)));
+                }
+                if (j+1 == x.m || (greater(key, children[j].key) && less(key, children[j+1].key)))
                     return search(children[j].next, key, ht-1);
             }
         }
+        System.out.println("Llegamos aki");
         return null;
     }
 
@@ -219,6 +228,22 @@ public class bTree {
         return s.toString();
     }
 
+    public void printTree(NodoAB h, int ht) {
+        Entry[] children = h.children;
+
+        if (ht == 0) {
+            for (int j = 0; j < h.m; j++) {
+                System.out.println("  " + children[j].path + " " + children[j].val.makeSerial());
+            }
+        }
+        else {
+            for (int j = 0; j < h.m; j++) {
+                if (j > 0) System.out.println("(" + children[j].key + ")");
+                printTree(children[j].next, ht-1);
+            }
+        }
+    }
+
 
     // comparison functions - make Comparable instead of Key to avoid casts
     private boolean less(Comparable k1, Comparable k2) {
@@ -237,6 +262,31 @@ public class bTree {
     public String getIndexedType(){
         return indexedType;
     }
+
+
+    public void getStats(){
+        /*
+        System.out.println("root children size: " + this.root.children.length);
+        System.out.println("root height: " + this.height);
+        System.out.println("root hojas: " + this.n);
+        for(Entry e : this.root.children){
+            if(e != null){
+                //String path = e.path != null ? e.path : "nodo interno - path";
+                //String key = e.key != null ? e.key : "nodo interno - key";
+                System.out.println("key: " + e.key + " path: " + e.path);
+                System.out.println(e.next.children.length);
+                for(Entry en : e.next.children){
+                    if(en != null)
+                        System.out.println("    key: " + en.key + " path: " + en.path);
+                }
+
+            }
+
+        }
+        */
+        printTree(this.root, this.height);
+    }
+
 
     /**
      * Unit tests the {@code BTree} data type.
@@ -311,7 +361,9 @@ public class bTree {
 
             System.out.println("size:    " + st.size());
             System.out.println("height:  " + st.height());
-            System.out.println(st.toString());
+            //System.out.println(st.toString());
+
+            st.getStats();
 
         }
         catch (NoSuchFieldException e){

@@ -105,13 +105,13 @@ public class Tests {
         for (Map.Entry<String, Nodo> entry : m.entrySet()){
             db.insertBTree(field, entry.getValue(), entry.getKey());
         }
-
+        System.out.println(db.getBTree());
         long iniTime = System.currentTimeMillis();
         Nodo n = db.searchInFile(key);
         long finTime = System.currentTimeMillis();
         long deltaTime = finTime - iniTime;
-        //System.out.println(db.getBTree());
-        if(n != null){
+
+        if(n == null){
             System.out.println("No Encontrado");
         }else{
             System.out.println(n.makeSerial());
@@ -123,6 +123,36 @@ public class Tests {
         //System.out.println("Secondary Path: " + db.getSecondaryPaths());
     }
 
+
+    public void statsTest(String filepath, String field, int i, String key) throws IOException, NoSuchFieldException, IllegalAccessException{
+        Database db = new Database(filepath);
+        db.ordenar(field);
+        db.bTreeIni();
+        Map<String, Nodo> m = db.firstOfPaths();
+        for (Map.Entry<String, Nodo> entry : m.entrySet()){
+            db.insertBTree(field, entry.getValue(), entry.getKey());
+        }
+        db.getBTree().getStats();
+        //System.out.println(db.getBTree());
+
+        long iniTime = System.currentTimeMillis();
+        Nodo n = db.searchInFile(key);
+        long finTime = System.currentTimeMillis();
+        long deltaTime = finTime - iniTime;
+
+        if(n == null){
+            System.out.println("No Encontrado");
+        }else{
+            System.out.println(n.makeSerial());
+        }
+
+
+        System.out.println("Numero potencia (N): " + i);
+        System.out.println("Tiempo total: " + deltaTime);
+        //System.out.println("Secondary Path: " + db.getSecondaryPaths());
+
+    }
+
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
         /*
         Tests t1 = new Tests();
@@ -130,21 +160,25 @@ public class Tests {
             t1.P1Inserciones(n);
             System.out.println();
         }
-
+*/
+        /*
         Tests t2 = new Tests();
         //for(int n : t2.getN()){
         for(int n=0; n<1; n++){
             t2.P1Ordenar("testP1Inserciones-1000000.txt" ,"id", 6);
             System.out.println();
         }
-
+        */
+/*
         Tests t3 = new Tests();
-        t3.P2BTree("testP1Inserciones-10000000.txt", "id", 6);
+        t3.P2BTree("testP1Inserciones-1000000.txt", "id", 6);
 */
 
 
         Tests t4 = new Tests();
-        t4.P2BTreeSearch("testP1Inserciones-100.txt", "id", 6, "3");
+        //t4.P2BTreeSearch("testP1Inserciones-1000000.txt", "id", 6, "100020");
+        t4.statsTest("testP1Inserciones-10000000.txt", "id", 6, "7135932");
+
 
 
         //Database db = new Database("testP1Inserciones.txt");

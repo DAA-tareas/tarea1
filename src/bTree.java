@@ -9,6 +9,7 @@ public class bTree {
     private NodoAB root;       // root of the B-tree
     private int height;      // height of the B-tree
     private int n;           // number of key-value pairs in the B-tree
+    private String indexedType;
 
     // helper B-tree node data type
     private static final class NodoAB {
@@ -82,25 +83,27 @@ public class bTree {
      *         and {@code null} if the key is not in the symbol table
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
-    public Nodo get(String key) {
+    public String get(String key) {
         if (key == null) throw new IllegalArgumentException("argument to get() is null");
         return search(root, key, height);
     }
 
-    private Nodo search(NodoAB x, String key, int ht) {
+    private String search(NodoAB x, String key, int ht) {
         Entry[] children = x.children;
 
         // external node
         if (ht == 0) {
             for (int j = 0; j < x.m; j++) {
-                if (eq(key, children[j].key)) return children[j].val;
+                if (greater(key, children[j].key)){
+                    return children[j].path;
+                }
             }
         }
 
         // internal node
         else {
             for (int j = 0; j < x.m; j++) {
-                if (j+1 == x.m || less(key, children[j+1].key))
+                if (j+1 == x.m || greater(key, children[j+1].key))
                     return search(children[j].next, key, ht-1);
             }
         }
@@ -119,6 +122,7 @@ public class bTree {
      */
     public void put(String key, Nodo val, String path) throws NoSuchFieldException, IllegalAccessException, IOException {
         if (key == null) throw new IllegalArgumentException("argument key to put() is null");
+        this.indexedType = key;
         Field field;
         try{
             field = val.getClass().getDeclaredField(key);
@@ -221,10 +225,18 @@ public class bTree {
         return k1.compareTo(k2) < 0;
     }
 
+    private boolean greater(Comparable k1, Comparable k2) {
+        return k1.compareTo(k2) > 0;
+    }
+
     private boolean eq(Comparable k1, Comparable k2) {
         return k1.compareTo(k2) == 0;
     }
 
+
+    public String getIndexedType(){
+        return indexedType;
+    }
 
     /**
      * Unit tests the {@code BTree} data type.

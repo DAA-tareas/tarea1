@@ -1,3 +1,5 @@
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +125,9 @@ public class Database {
         // Del archivo enorme (llamese A)
         // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno y ordenarlos
         this.segmentar(field);
+        // Hacer una copia de los secondaryPaths
+        List<String> copySecPaths = new ArrayList<>();
+        copySecPaths.addAll(this.secondaryPaths);
         int numIter = 1;
         // Mientras no se hayan mergeado todos los archivos
         while(this.secondaryPaths.size() != 1){
@@ -130,8 +135,22 @@ public class Database {
             this.merger(field, numIter);
             numIter++;
         }
-
-
+        //System.out.println("pasamooooos");
+        if(copySecPaths.size() != 1){
+            for(String s : copySecPaths){
+                //abrir archivo
+                File file = new File(s);
+                //System.out.println(s);
+                //borrarlo
+                file.delete();
+            }
+            this.path = this.secondaryPaths.get(0);
+            this.secondaryPaths.clear();
+            //segmentar
+            this.segmentar(field);
+        }
+        this.partionPaths.clear();
+        this.partionPaths.addAll(secondaryPaths);
     }
 
     public void merger(String mergeAttr, int numIter) throws IOException{
@@ -289,6 +308,10 @@ public class Database {
         return this.partionPaths;
     }
 
+    public List<String> getSecondaryPaths(){
+        return this.secondaryPaths;
+    }
+
     public void bTreeIni(){
         this.index = new bTree();
     }
@@ -300,6 +323,36 @@ public class Database {
     public bTree getBTree(){
         return this.index;
     }
+
+    /**
+     * Busqueda en un archivo
+     */
+    public Nodo searchInFile(String key) throws IOException{
+        String path = index.get(key);
+        //System.out.println("path=" + path);
+        String index = this.index.getIndexedType();
+
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        //Busqueda sobre el archivo
+        String line = "";
+        while((line = br.readLine()) != null){
+            Nodo readNodo = null;
+            // Nodo Cons
+            if (line.split(" ").length == 3) {
+                readNodo = new NodoCons(line);
+            }
+            // Nodo Prod
+            else if(line.split(" ").length == 4){
+                readNodo = new NodoProd(line);
+            }
+            if(readNodo != null && readNodo.getAttribute(index).equals(key)){
+                return readNodo;
+            }
+        }
+        return null;
+    }
+
+
 
 
     public List<String> A = new ArrayList<>();

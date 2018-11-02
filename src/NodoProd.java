@@ -72,4 +72,16 @@ public class NodoProd extends AbstractNodo {
             return 0;
         }
     }
+
+    public String getAttribute(String a){
+        if(a.equals("id"))
+            return Integer.toString(this.getId());
+        else if( a.equals("precio"))
+            return Integer.toString(this.getPrecio());
+        else if( a.equals("ptosRec"))
+            return Integer.toString(this.getPtosRec());
+        else
+            return Integer.toString(this.getPtosNec());
+    }
+
 }

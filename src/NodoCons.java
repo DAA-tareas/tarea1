@@ -53,4 +53,13 @@ public class NodoCons extends AbstractNodo {
     public int compareToNodoProd(NodoProd p, String f){
         return this.getPtosAc() - p.getPtosNec();
     }
+
+    public String getAttribute(String a){
+        if(a.equals("id"))
+            return Integer.toString(this.getId());
+        else if( a.equals("rut"))
+            return this.getRut();
+        else
+            return Integer.toString(this.getPtosAc());
+    }
 }

@@ -11,4 +11,6 @@ public abstract class AbstractNodo implements Nodo{
 
     public abstract String makeSerial();
 
+    public abstract String getAttribute(String a);
+
 }

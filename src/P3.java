@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class P3 {
 
-    public Database insertClients(int cantidad) throws IOException{
-        Database dbClientes = new Database("clientes/clientes.txt");
+    public Database insertClients(int cantidad, String folder) throws IOException{
+        Database dbClientes = new Database(folder + "/clientes.txt");
         List<Nodo> nodoList = new ArrayList<>();
 
         List<Integer> randomList = new ArrayList<>();
@@ -29,14 +29,14 @@ public class P3 {
             //Realizar inserciones
             if (n%Math.pow(10,5) == 0) {
                 if(n > 0) {
-                    dbClientes.addToFolder(nodoList, "clientes");
+                    dbClientes.addToFolder(nodoList, folder);
                     nodoList = new ArrayList<>();
                 }
             }
         }
 
         if (nodoList.size() > 0) {
-            dbClientes.addToFolder(nodoList, "clientes");
+            dbClientes.addToFolder(nodoList, folder);
         }
 
         System.out.println("Insertado: " + cantidad + " clientes.");
@@ -45,8 +45,8 @@ public class P3 {
     }
 
 
-    public Database insertProductos(int cantidad) throws IOException{
-        Database dbProductos = new Database("productos/productos.txt");
+    public Database insertProductos(int cantidad, String folder) throws IOException{
+        Database dbProductos = new Database(folder + "/productos.txt");
         List<Nodo> nodoList = new ArrayList<>();
 
         List<Integer> randomList = new ArrayList<>();
@@ -65,14 +65,14 @@ public class P3 {
             //Realizar inserciones
             if (n%Math.pow(10,5) == 0) {
                 if(n > 0) {
-                    dbProductos.addToFolder(nodoList, "productos");
+                    dbProductos.addToFolder(nodoList, folder);
                     nodoList = new ArrayList<>();
                 }
             }
         }
 
         if (nodoList.size() > 0) {
-            dbProductos.addToFolder(nodoList, "productos");
+            dbProductos.addToFolder(nodoList, folder);
         }
 
         System.out.println("Insertado: " + cantidad + " productos.");
@@ -80,7 +80,7 @@ public class P3 {
         return dbProductos;
     }
 
-    public void listConsumers(Database dbCl, Database dbPr) throws IOException{
+    public long listConsumers(Database dbCl, Database dbPr, boolean print) throws IOException{
         List<NodoProd> listadoProds = new ArrayList<>();
 
         boolean read = true;
@@ -91,22 +91,25 @@ public class P3 {
 
         String lineCons = "ini";
         String lineProd = "";
+        long iniTime = System.currentTimeMillis();
 
         //Para cada consumidor
         while(brCl.ready()){
-            if((lineCons = brCl.readLine().trim()) != ""){
-                System.out.println(lineCons == "");
-                System.out.println("que es esto" + lineCons + "esto");
+            if((lineCons = brCl.readLine()) == null) break;
+            if(lineCons.split(" ").length == 3){
                 NodoCons cons = new NodoCons(lineCons);
                 //manteniendo cursor en tabla productos
                 while (brPr.ready()) {
                     //Listar consumidor con todos los productos que puede llevar (sin incluir el del cursor)
-                    System.out.println("ID cliente: " + cons.getId());
-                    System.out.print("ID Productos: ");
-                    for (NodoProd n : listadoProds) {
-                        System.out.print(n.getId() + " ");
+                    if(print) {
+                        System.out.println("ID cliente: " + cons.getId());
+                        System.out.print("ID Productos: ");
+
+                        for (NodoProd n : listadoProds) {
+                            System.out.print(n.getId() + " ");
+                        }
+                        System.out.println();
                     }
-                    System.out.println();
                     if (read) {
                         if ((lineProd = brPr.readLine().trim()) == "")
                             break;
@@ -115,7 +118,6 @@ public class P3 {
                     if (lineProd.trim() != "") {
                         NodoProd prod = new NodoProd(lineProd);
                         //Si el cliente puede canjearlo, agregarlo al listado
-                        System.out.println(cons.getPtosAc() + " " + prod.getPtosNec());
                         if (cons.getPtosAc() >= prod.getPtosNec()) {
                             listadoProds.add(prod);
                         } else {
@@ -129,20 +131,58 @@ public class P3 {
 
         }
 
+        long finTime = System.currentTimeMillis();
+
+        long deltaTime = finTime - iniTime;
+
+        return deltaTime;
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
         P3 p = new P3();
-        Database dbClientes = p.insertClients(10);
-        Database dbProductos = p.insertProductos(10);
 
-        // Ordenar segun puntos Actumulados
-        dbClientes.ordenar("ptosAc");
-        // Ordenar segun puntos necesarios
-        dbProductos.ordenar("ptosNec");
+        double C[] = {Math.pow(10, 1), Math.pow(10, 2), Math.pow(10, 3)};
+        double P[] = {Math.pow(10, 1), Math.pow(10, 2), Math.pow(10, 3), Math.pow(10, 4)};
+
+        /*
+        double C[] = {Math.pow(10, 1)};
+        double P[] = {Math.pow(10, 1), Math.pow(10, 2)};
+        */
+
+        List<Database> basesCl = new ArrayList<>();
+        List<Database> basesPr = new ArrayList<>();
+
+        for(double i : C){
+            Database dbClientes = p.insertClients((int)i, "clientes" + (int)i);
+            // Ordenar segun puntos Actumulados
+            dbClientes.ordenar("ptosAc");
+            basesCl.add(dbClientes);
+        }
+        for(double i : P){
+            Database dbProductos = p.insertProductos((int)i, "productos" + (int)i);
+            // Ordenar segun puntos necesarios
+            dbProductos.ordenar("ptosNec");
+            basesPr.add(dbProductos);
+        }
+
+        List<String> dbVs = new ArrayList<>();
+        List<Long> timesListed = new ArrayList<>();
 
         //Listar clientes con sus productos
-        p.listConsumers(dbClientes, dbProductos);
+        for(Database cl : basesCl){
+            for(Database pr : basesPr){
+                // colocar false, solo arroja los resultados finales (sin el print de cada consumidor con su listado)
+                long time = p.listConsumers(cl, pr, false);
+                timesListed.add(time);
+                dbVs.add(cl.getPath().split("/")[0] + " v/s " + pr.getPath().split("/")[0]);
+                //System.out.println(cl.getPath().split("/")[0] + " v/s " + pr.getPath().split("/")[0] + ": " + time + "ms");
+            }
+        }
+
+        for(int i=0; i<dbVs.size(); i++){
+            System.out.println(dbVs.get(i) + ": " + timesListed.get(i) + " ms");
+        }
+
 
     }
 

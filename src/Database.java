@@ -53,15 +53,50 @@ public class Database {
         }
     }
 
+    void addToFolder(List<Nodo> nodoList, String folder) throws IOException{
+        if(folder.trim() == ""){
+            this.add(nodoList);
+            System.out.println("Entro aqui");
+            return;
+        }
+        else{
+            BufferedWriter out = null;
+            try {
+                String toAdd = serialize(nodoList);
+                //Crear carpeta si no existe
+                new File(folder).mkdirs();
+                //System.out.println(this.path);
+                FileWriter fstream = new FileWriter(this.path, true); //true tells to append data.
+                out = new BufferedWriter(fstream);
+                out.write(toAdd + "\r\n");
+            }
+            catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+            finally {
+                if(out != null) {
+                    out.close();
+                }
+            }
+        }
+    }
+
 
     /**
      * Metodo que escribe la info del archivo en archivos de tamaño B
      * Cada file segmentado, lo guarda en this.secondaryPaths
      */
     public void segmentar(String path, String field) throws IOException{
+        String folder = path.split("/")[0];
+        if(folder.equals(path)){
+            folder = "";
+        }else{
+            folder = folder + "/";
+        }
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
         int nFile = 1;
+        String nFileName = folder + nFile;
         Ordenador ord = new Ordenador();
         while(br.ready()){
             // Acceso a disco
@@ -95,13 +130,12 @@ public class Database {
 
             }
 
-
             List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
             if(listaOrdenada != null){
-                Database db = new Database(nFile + ".txt");
+                Database db = new Database(nFileName + ".txt");
                 db.add(listaOrdenada);
 
-                this.secondaryPaths.add(nFile + ".txt");
+                this.secondaryPaths.add(nFileName + ".txt");
                 nFile++;
                 // Acceso a disco - escritura
                 this.accessDisk++;
@@ -336,6 +370,14 @@ public class Database {
 
     public bTree getBTree(){
         return this.index;
+    }
+
+    public String getFinalMergedPath(){
+        return this.finalMergedPath;
+    }
+
+    public String getPath(){
+        return this.path;
     }
 
     /**

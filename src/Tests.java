@@ -1,4 +1,7 @@
 import javax.xml.crypto.Data;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.lang.StringBuffer;
 import java.io.IOException;
 import java.util.*;
@@ -114,6 +117,11 @@ public class Tests {
 
     }
 
+    public void printAllInFile(String path){
+
+    }
+
+
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
 
         // Es necesario comentar cada test  de cada parte para ejecutar los siguientes.
@@ -124,18 +132,22 @@ public class Tests {
         path: nombre del archivo que se genera al insertar, para luego ser ordenado
         field: campo por el cual se va a ordenar la base de datos
          */
+        /*
         int i = 7;
         int N = (int) Math.pow(10, i);
         String path = "testP1Inserciones-" + N + ".txt";
         String field = "id";
+        */
 
         /*
         TEST - PARTE 1
          */
 
+        /*
         Tests t1 = new Tests();
         t1.P1Inserciones(N);
         System.out.println();
+        */
         /*
         Tests t2 = new Tests();
         t2.P1Ordenar(path ,field, i);
@@ -147,10 +159,23 @@ public class Tests {
         Se deben tener los archivos "testP1Inserciones-" correspondiente previamente generado
          */
 
+        /*
         Tests t4 = new Tests();
         //key: valor de la llave de la fila que estamos buscando
-        t4.P2BTreeSearch(path, field, i, "43");
+        t4.P2BTreeSearch(path, field, i);
 
+        */
+
+
+
+        //Database db = new Database("testP1Inserciones.txt");
+        //db.segmentar(1837, "id");
+
+        /*
+        for(int i : t.getN()){
+            System.out.println(i);
+        }
+        */
 
     }
 

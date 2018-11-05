@@ -111,11 +111,6 @@ public class Database {
 
                 String[] aNodo = linea.split(" ");
                 //System.out.println("Largo lista: " + aNodo.length);
-                /*
-                System.out.println(aNodo[0]);
-                System.out.println(aNodo[1]);
-                System.out.println(aNodo[2]);
-                */
 
                 if (aNodo.length==4){
                     nodo = new NodoProd(Integer.valueOf(aNodo[0]), Integer.valueOf(aNodo[1]), Integer.valueOf(aNodo[2]), Integer.valueOf(aNodo[3]));
@@ -131,12 +126,14 @@ public class Database {
             }
 
             List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
+
             if(listaOrdenada != null){
                 Database db = new Database(nFileName + ".txt");
                 db.add(listaOrdenada);
 
                 this.secondaryPaths.add(nFileName + ".txt");
                 nFile++;
+                nFileName = folder + nFile;
                 // Acceso a disco - escritura
                 this.accessDisk++;
             }

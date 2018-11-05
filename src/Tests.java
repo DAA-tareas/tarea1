@@ -1,3 +1,5 @@
+import com.sun.org.glassfish.external.statistics.Stats;
+
 import javax.xml.crypto.Data;
 import java.lang.StringBuffer;
 import java.io.IOException;
@@ -97,30 +99,40 @@ public class Tests {
         return db;
     }
 
-    public void P2BTreeSearch(String filepath, String field, int i, String key) throws IOException, NoSuchFieldException, IllegalAccessException{
+    public void P2BTreeSearch(String filepath, String field, int i) throws IOException, NoSuchFieldException, IllegalAccessException{
+        int iterations = 1000;
         Database db = new Database(filepath);
         db.ordenar(field);
-        db.bTreeIni();
-        Map<String, Nodo> m = db.firstOfPaths();
-        for (Map.Entry<String, Nodo> entry : m.entrySet()){
-            db.insertBTree(field, entry.getValue(), entry.getKey());
+        // Para 1000 iteraciones, insertar en el bTree
+        long iniTimeInsert = System.currentTimeMillis();
+        for(int n=0; n<iterations; n++){
+            db.bTreeIni();
+            Map<String, Nodo> m = db.firstOfPaths();
+            for (Map.Entry<String, Nodo> entry : m.entrySet()){
+                db.insertBTree(field, entry.getValue(), entry.getKey());
+            }
         }
-        //System.out.println(db.getBTree());
-        long iniTime = System.currentTimeMillis();
-        Nodo n = db.searchInFile(key);
-        long finTime = System.currentTimeMillis();
-        long deltaTime = finTime - iniTime;
+        long finTimeInsert = System.currentTimeMillis();
+        long deltaTimeInsert = finTimeInsert - iniTimeInsert;
+        double meanInsert = 1.0*deltaTimeInsert/iterations;
 
-        if(n == null){
-            System.out.println("No Encontrado");
-        }else{
-            System.out.println(n.makeSerial());
+        System.out.println("Promedio inserción: " + meanInsert);
+
+        Random random = new Random();
+
+        // Para 1000 iteraciones, busquedas en el bTree
+        long iniTimeSearch = System.currentTimeMillis();
+        for(int n=0; n<iterations; n++){
+            int rint = random.nextInt(i);
+            db.searchInFile(Integer.toString(rint));
         }
+        long finTimeSearch = System.currentTimeMillis();
+        long deltaTimeSearch = finTimeSearch - iniTimeSearch;
 
+        double meanSearch = 1.0*deltaTimeSearch/iterations;
 
-        System.out.println("Numero potencia (N): " + i);
-        System.out.println("Tiempo total: " + deltaTime);
-        //System.out.println("Secondary Path: " + db.getSecondaryPaths());
+        System.out.println("Promedio búsqueda: " + meanSearch);
+
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
@@ -139,14 +151,10 @@ public class Tests {
             System.out.println();
         }
         */
-/*
-        Tests t3 = new Tests();
-        t3.P2BTree("testP1Inserciones-1000000.txt", "id", 6);
-*/
-
-
+        Random random = new Random();
         Tests t4 = new Tests();
-        t4.P2BTreeSearch("testP1Inserciones-1000000.txt", "id", 6, "32005");
+        int datos = 10000000;
+        t4.P2BTreeSearch("testP1Inserciones-"+ datos +".txt", "id", 6);
 
 
 

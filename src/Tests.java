@@ -149,7 +149,7 @@ public class Tests {
 
         Tests t4 = new Tests();
         //key: valor de la llave de la fila que estamos buscando
-        t4.P2BTreeSearch(path, field, i, "43");
+        t4.P2BTreeSearch(path, field, i);
 
 
     }

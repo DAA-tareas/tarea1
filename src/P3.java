@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -143,11 +142,6 @@ public class P3 {
 
         double C[] = {Math.pow(10, 1), Math.pow(10, 2), Math.pow(10, 3)};
         double P[] = {Math.pow(10, 1), Math.pow(10, 2), Math.pow(10, 3), Math.pow(10, 4)};
-
-        /*
-        double C[] = {Math.pow(10, 1)};
-        double P[] = {Math.pow(10, 1), Math.pow(10, 2)};
-        */
 
         List<Database> basesCl = new ArrayList<>();
         List<Database> basesPr = new ArrayList<>();

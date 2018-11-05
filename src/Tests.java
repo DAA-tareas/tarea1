@@ -1,5 +1,3 @@
-import com.sun.org.glassfish.external.statistics.Stats;
-
 import javax.xml.crypto.Data;
 import java.lang.StringBuffer;
 import java.io.IOException;
@@ -54,6 +52,7 @@ public class Tests {
 
         deltaTime = finTime - iniTime;
 
+        System.out.println("--- Inserciones ---");
         System.out.println("Numero potencia (N): " + i);
         System.out.println("Tiempo total: " + deltaTime);
         System.out.println("Accesos totales a discos: " + diskAccess);
@@ -66,6 +65,7 @@ public class Tests {
         long finTime = System.currentTimeMillis();
         long deltaTime = finTime - iniTime;
 
+        System.out.println("--- Ordenar datos ---");
         System.out.println("Numero potencia (N): " + i);
         System.out.println("Tiempo total: " + deltaTime);
         System.out.println("Accesos totales a discos: " + db.getAccessDisk());
@@ -77,27 +77,6 @@ public class Tests {
         return this.N;
     }
 
-    public Database P2BTree(String filepath, String field, int i) throws IOException, NoSuchFieldException, IllegalAccessException{
-        Database db = P1Ordenar(filepath, field, i);
-        db.bTreeIni();
-        long iniTime = System.currentTimeMillis();
-        Map<String, Nodo> m = db.firstOfPaths();
-        for (Map.Entry<String, Nodo> entry : m.entrySet()){
-            db.insertBTree(field, entry.getValue(), entry.getKey());
-        }
-        long finTime = System.currentTimeMillis();
-        long deltaTime = finTime - iniTime;
-
-        System.out.println(db.getPartionPaths());
-        System.out.println("--o--");
-        //System.out.println(db.getBTree().toString());
-
-        System.out.println("Numero potencia (N): " + i);
-        System.out.println("Tiempo total: " + deltaTime);
-        System.out.println("Accesos totales a discos: " + db.getAccessDisk());
-
-        return db;
-    }
 
     public void P2BTreeSearch(String filepath, String field, int i) throws IOException, NoSuchFieldException, IllegalAccessException{
         int iterations = 1000;
@@ -136,36 +115,42 @@ public class Tests {
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
+
+        // Es necesario comentar cada test  de cada parte para ejecutar los siguientes.
+        // Además se deben borrar los archivos generados.
+
         /*
+        i: número de elementos a insertar y luego ordenar
+        path: nombre del archivo que se genera al insertar, para luego ser ordenado
+        field: campo por el cual se va a ordenar la base de datos
+         */
+        int i = 7;
+        int N = (int) Math.pow(10, i);
+        String path = "testP1Inserciones-" + N + ".txt";
+        String field = "id";
+
+        /*
+        TEST - PARTE 1
+         */
+
         Tests t1 = new Tests();
-        for(int n : t1.getN()){
-            t1.P1Inserciones(n);
-            System.out.println();
-        }
-*/
+        t1.P1Inserciones(N);
+        System.out.println();
         /*
         Tests t2 = new Tests();
-        //for(int n : t2.getN()){
-        for(int n=0; n<1; n++){
-            t2.P1Ordenar("testP1Inserciones-1000000.txt" ,"id", 6);
-            System.out.println();
-        }
+        t2.P1Ordenar(path ,field, i);
+        System.out.println();
         */
-        Random random = new Random();
-        Tests t4 = new Tests();
-        int datos = 10000000;
-        t4.P2BTreeSearch("testP1Inserciones-"+ datos +".txt", "id", 6);
-
-
-
-        //Database db = new Database("testP1Inserciones.txt");
-        //db.segmentar(1837, "id");
 
         /*
-        for(int i : t.getN()){
-            System.out.println(i);
-        }
-        */
+        TEST - PARTE 2
+        Se deben tener los archivos "testP1Inserciones-" correspondiente previamente generado
+         */
+
+        Tests t4 = new Tests();
+        //key: valor de la llave de la fila que estamos buscando
+        t4.P2BTreeSearch(path, field, i, "43");
+
 
     }
 

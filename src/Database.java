@@ -385,7 +385,7 @@ public class Database {
 
         BufferedReader br = new BufferedReader(new FileReader(path));
         //Busqueda sobre el archivo
-        String line = "";
+        String line;
         while((line = br.readLine()) != null){
             Nodo readNodo = null;
             // Nodo Cons

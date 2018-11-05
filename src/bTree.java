@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 public class bTree {
     // max children per B-tree node = M-1
     // (must be even and greater than 2)
-    private static final int M = 10;
+    private static final int M = 100000;
 
     private NodoAB root;       // root of the B-tree
     private int height;      // height of the B-tree

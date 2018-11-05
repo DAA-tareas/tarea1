@@ -172,7 +172,7 @@ public class P3 {
         for(Database cl : basesCl){
             for(Database pr : basesPr){
                 // colocar false, solo arroja los resultados finales (sin el print de cada consumidor con su listado)
-                long time = p.listConsumers(cl, pr, false);
+                long time = p.listConsumers(cl, pr, true);
                 timesListed.add(time);
                 dbVs.add(cl.getPath().split("/")[0] + " v/s " + pr.getPath().split("/")[0]);
                 //System.out.println(cl.getPath().split("/")[0] + " v/s " + pr.getPath().split("/")[0] + ": " + time + "ms");

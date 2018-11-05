@@ -137,6 +137,7 @@ public class Database {
 
                 this.secondaryPaths.add(nFileName + ".txt");
                 nFile++;
+                nFileName = folder + nFile;
                 // Acceso a disco - escritura
                 this.accessDisk++;
             }

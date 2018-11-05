@@ -52,6 +52,7 @@ public class Tests {
 
         deltaTime = finTime - iniTime;
 
+        System.out.println("--- Inserciones ---");
         System.out.println("Numero potencia (N): " + i);
         System.out.println("Tiempo total: " + deltaTime);
         System.out.println("Accesos totales a discos: " + diskAccess);
@@ -64,6 +65,7 @@ public class Tests {
         long finTime = System.currentTimeMillis();
         long deltaTime = finTime - iniTime;
 
+        System.out.println("--- Ordenar datos ---");
         System.out.println("Numero potencia (N): " + i);
         System.out.println("Tiempo total: " + deltaTime);
         System.out.println("Accesos totales a discos: " + db.getAccessDisk());
@@ -75,41 +77,24 @@ public class Tests {
         return this.N;
     }
 
-    public Database P2BTree(String filepath, String field, int i) throws IOException, NoSuchFieldException, IllegalAccessException{
-        Database db = P1Ordenar(filepath, field, i);
-        db.bTreeIni();
-        long iniTime = System.currentTimeMillis();
-        Map<String, Nodo> m = db.firstOfPaths();
-        for (Map.Entry<String, Nodo> entry : m.entrySet()){
-            db.insertBTree(field, entry.getValue(), entry.getKey());
-        }
-        long finTime = System.currentTimeMillis();
-        long deltaTime = finTime - iniTime;
-
-        System.out.println(db.getPartionPaths());
-        System.out.println("--o--");
-        //System.out.println(db.getBTree().toString());
-
-        System.out.println("Numero potencia (N): " + i);
-        System.out.println("Tiempo total: " + deltaTime);
-        System.out.println("Accesos totales a discos: " + db.getAccessDisk());
-
-        return db;
-    }
 
     public void P2BTreeSearch(String filepath, String field, int i, String key) throws IOException, NoSuchFieldException, IllegalAccessException{
         Database db = new Database(filepath);
         db.ordenar(field);
         db.bTreeIni();
+        long iniTimeInsert = System.currentTimeMillis();
         Map<String, Nodo> m = db.firstOfPaths();
         for (Map.Entry<String, Nodo> entry : m.entrySet()){
             db.insertBTree(field, entry.getValue(), entry.getKey());
         }
+        long finTimeInsert = System.currentTimeMillis();
+        long deltaTimeInsert = finTimeInsert - iniTimeInsert;
+        System.out.println("Accesos totales a discos: " + db.getAccessDisk());
         //System.out.println(db.getBTree());
-        long iniTime = System.currentTimeMillis();
+        long iniTimeSearch = System.currentTimeMillis();
         Nodo n = db.searchInFile(key);
-        long finTime = System.currentTimeMillis();
-        long deltaTime = finTime - iniTime;
+        long finTimeSearch = System.currentTimeMillis();
+        long deltaTimeSearch = finTimeSearch - iniTimeSearch;
 
         if(n == null){
             System.out.println("No Encontrado");
@@ -119,21 +104,23 @@ public class Tests {
 
 
         System.out.println("Numero potencia (N): " + i);
-        System.out.println("Tiempo total: " + deltaTime);
+        System.out.println("Tiempo total Inserción: " + deltaTimeInsert);
+        System.out.println("Tiempo total Búsqueda: " + deltaTimeSearch);
+
         //System.out.println("Secondary Path: " + db.getSecondaryPaths());
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException{
 
         // Es necesario comentar cada test  de cada parte para ejecutar los siguientes.
-        // Además se deben borrar los archivos generados (sin contar los testP1Inseciones).
+        // Además se deben borrar los archivos generados.
 
         /*
         i: número de elementos a insertar y luego ordenar
         path: nombre del archivo que se genera al insertar, para luego ser ordenado
         field: campo por el cual se va a ordenar la base de datos
          */
-        int i = 4;
+        int i = 7;
         int N = (int) Math.pow(10, i);
         String path = "testP1Inserciones-" + N + ".txt";
         String field = "id";
@@ -150,17 +137,15 @@ public class Tests {
         t2.P1Ordenar(path ,field, i);
         System.out.println();
         */
+
         /*
         TEST - PARTE 2
+        Se deben tener los archivos "testP1Inserciones-" correspondiente previamente generado
          */
-
-
-        Tests t3 = new Tests();
-        t3.P2BTree(path, field, i);
 
         Tests t4 = new Tests();
         //key: valor de la llave de la fila que estamos buscando
-        t4.P2BTreeSearch(path, field, i, "545");
+        t4.P2BTreeSearch(path, field, i, "43");
 
 
     }

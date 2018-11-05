@@ -1,5 +1,3 @@
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +56,7 @@ public class Database {
      * Metodo que escribe la info del archivo en archivos de tamaño B
      * Cada file segmentado, lo guarda en this.secondaryPaths
      */
-    public void segmentar(String path, String field) throws IOException{
+    public void segmentar(String path, String field, String fileId) throws IOException{
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
         int nFile = 1;
@@ -98,10 +96,10 @@ public class Database {
 
             List<Nodo> listaOrdenada =  ord.ordenarSec(lista, field);
             if(listaOrdenada != null){
-                Database db = new Database(nFile + ".txt");
+                Database db = new Database(nFile + fileId + ".txt");
                 db.add(listaOrdenada);
 
-                this.secondaryPaths.add(nFile + ".txt");
+                this.secondaryPaths.add(nFile + fileId + ".txt");
                 nFile++;
                 // Acceso a disco - escritura
                 this.accessDisk++;
@@ -129,10 +127,10 @@ public class Database {
      * Utiliza MergeSort
      * @param field atributo por el que ordena
      */
-    void ordenar(String field) throws IOException{
+    void ordenar(String field, String fileId) throws IOException{
         // Del archivo enorme (llamese A)
         // Crear k = |A|/10^5 bloques con 10^5 nodos cada uno y ordenarlos
-        this.segmentar(this.path, field);
+        this.segmentar(this.path, field, fileId);
         // Hacer una copia de los secondaryPaths
         List<String> copySecPaths = new ArrayList<>();
         copySecPaths.addAll(this.secondaryPaths);
@@ -162,7 +160,7 @@ public class Database {
             //this.path = this.secondaryPaths.get(0);
             this.secondaryPaths.clear();
             //segmentar
-            this.segmentar(this.finalMergedPath, field);
+            this.segmentar(this.finalMergedPath, field, fileId);
         }
 
 
@@ -348,7 +346,7 @@ public class Database {
 
         BufferedReader br = new BufferedReader(new FileReader(path));
         //Busqueda sobre el archivo
-        String line = "";
+        String line;
         while((line = br.readLine()) != null){
             Nodo readNodo = null;
             // Nodo Cons
